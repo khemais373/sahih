@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Scandar Translate — Documents multilingues identiques</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#F4F6F9;--card:#fff;--line:#E6EAF0;--ink:#0F1E2E;--soft:#64748B;
 --blue:#2563EB;--blue-d:#1D4ED8;--blue-bg:#EFF4FF;
@@ -45,7 +45,6 @@ main{padding:18px 0 70px}
 .qbtn{font-size:11px;font-weight:700;color:var(--soft);background:#F1F4F8;border:none;border-radius:7px;padding:6px 9px;cursor:pointer}
 .btn{font-family:inherit;font-size:14px;font-weight:700;padding:12px 20px;border-radius:10px;border:none;cursor:pointer}
 .btn-primary{background:var(--blue);color:#fff}.btn-primary:disabled{background:#B9C6D8;cursor:not-allowed}
-.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
 .status{font-size:12.5px;color:var(--blue-d);font-weight:600;min-height:18px;margin-top:10px}
 .diag{font-size:12px;margin-top:8px;padding:9px 11px;border-radius:8px;display:none}
 .diag.ok{display:block;background:var(--green-bg);color:var(--green)}
@@ -70,52 +69,16 @@ main{padding:18px 0 70px}
 .tab.done .st{background:var(--green)}
 .tab.load .st{background:var(--amber);animation:blink 1s infinite}
 @keyframes blink{50%{opacity:.3}}
-.pagesview{display:flex;flex-direction:column;gap:16px;align-items:center;background:#EBEFF4;border:1px solid var(--line);border-radius:14px;padding:18px 10px;max-height:70vh;overflow:auto}
-.sheetpage{width:min(380px,92vw);box-shadow:0 10px 30px -12px rgba(15,30,46,.35);border-radius:4px;overflow:hidden;flex:none;position:relative}
+.pagesview{display:flex;flex-direction:column;gap:16px;align-items:center;background:#EBEFF4;border:1px solid var(--line);border-radius:14px;padding:18px 10px;max-height:72vh;overflow:auto}
+.pagesview canvas{width:min(380px,92vw);height:auto;box-shadow:0 10px 30px -12px rgba(15,30,46,.35);border-radius:4px;flex:none}
 .pv-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .note{font-size:11px;color:var(--soft);margin-top:10px}
 .hidden{display:none}
 .empty-help{font-size:13px;color:var(--soft);line-height:1.7}.empty-help b{color:var(--ink)}
 button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-
-/* ===== Rendu des pages reconstruites ===== */
-.rp{position:relative;width:100%;display:flex;flex-direction:column;overflow:hidden}
-.rp.rtl{direction:rtl}
-.rp.rtl *{letter-spacing:0!important}
-.rp .inner{flex:1;display:flex;flex-direction:column;padding:7% 8%}
-.rp .cardzone{background:#fff;flex:1;display:flex;flex-direction:column;padding:8% 9%;border-radius:2px}
-.rp .center{justify-content:center;align-items:center;text-align:center}
-.rp .b-titre{font-family:'Cormorant Garamond','Playfair Display',serif;font-weight:600;line-height:1.15}
-.rp.rtl .b-titre{font-family:'Inter',sans-serif;font-weight:800}
-.rp .b-titre.xl{font-size:2.6em;letter-spacing:.35em;text-indent:.35em}
-.rp .b-titre.l{font-size:1.7em;letter-spacing:.14em}
-.rp .b-titre.m{font-size:1.2em}
-.rp.rtl .b-titre.xl,.rp.rtl .b-titre.l{letter-spacing:0!important;text-indent:0}
-.rp .b-vert{font-family:'Inter',sans-serif;font-weight:500;font-size:2em;letter-spacing:.1em;display:flex;flex-direction:column;align-items:center;gap:.55em}
-.rp .b-vert span{display:block;line-height:1}
-.rp .b-logo{font-family:'Cormorant Garamond',serif;font-size:2em;letter-spacing:.3em;text-indent:.3em;font-weight:500}
-.rp .b-logo small{display:block;font-size:.34em;letter-spacing:.9em;text-indent:.9em;margin-top:.5em;font-weight:400}
-.rp .b-sec{margin-bottom:1.4em}
-.rp .b-sec .st{font-family:'Cormorant Garamond',serif;font-size:1.25em;letter-spacing:.06em;padding-bottom:.25em;border-bottom:1px solid;margin-bottom:.6em;display:inline-block;min-width:46%}
-.rp.rtl .b-sec .st{font-family:'Inter',sans-serif;font-weight:700}
-.rp .cols{display:flex;justify-content:flex-end;gap:1.4em;font-size:.62em;font-weight:600;opacity:.85;margin:-1.6em 0 .6em}
-.rp.rtl .cols{justify-content:flex-start}
-.rp .it{display:flex;justify-content:space-between;gap:1em;padding:.28em 0;align-items:baseline}
-.rp .it .nm{font-size:.74em;letter-spacing:.05em;text-transform:uppercase}
-.rp.rtl .it .nm{text-transform:none;letter-spacing:0}
-.rp .it .ds{font-size:.6em;opacity:.7;margin-top:.15em;text-transform:none;letter-spacing:0}
-.rp .it .prs{display:flex;gap:1.4em;font-size:.72em;font-weight:600;white-space:nowrap}
-.rp .b-para{font-size:.85em;line-height:1.75;margin-bottom:1em;white-space:pre-wrap}
-.rp .b-band{border-radius:.55em;padding:.9em 1.1em;margin-bottom:1em;font-size:.85em;line-height:1.6;font-weight:600;text-align:center}
-.rp .b-esp.s{height:1em}.rp .b-esp.m{height:2.2em}.rp .b-esp.l{height:4em}
-.rp .b-hl{font-weight:800}
 @page{margin:0}
-@media print{
-  body{background:#fff}
-  body>*{display:none!important}
-  #printroot{display:block!important}
-  #printroot .rp{page-break-after:always;width:100%;height:100vh}
-}
+@media print{body{background:#fff}body>*{display:none!important}#printroot{display:block!important}
+#printroot img{page-break-after:always;width:100%;height:100vh;object-fit:contain;display:block}}
 #printroot{display:none}
 </style>
 </head>
@@ -130,14 +93,14 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
     <div class="kpi"><div class="l">Pages lues</div><div class="v" id="kPages">0</div></div>
     <div class="kpi"><div class="l">Langues choisies</div><div class="v" id="kSel">0</div></div>
     <div class="kpi"><div class="l">Versions prêtes</div><div class="v" id="kDone">0</div></div>
-    <div class="kpi"><div class="l">Prix vérifiés</div><div class="v" id="kPrix">—</div></div>
+    <div class="kpi"><div class="l">Zones de texte</div><div class="v" id="kZones">—</div></div>
   </div>
 
   <div class="err" id="errBox"></div>
 
   <div class="card">
     <h2><span class="n">1</span> Votre document</h2>
-    <p class="sub">Menu, affiche, tarifs, flyer… Image ou PDF jusqu'à 8 pages. Le format d'origine est conservé.</p>
+    <p class="sub">Menu, affiche, flyer, tarifs… Image ou PDF jusqu'à 8 pages. <b>Le visuel d'origine est conservé tel quel</b> — seuls les textes changent de langue.</p>
     <div id="drop" class="drop" tabindex="0" role="button">
       <div class="ic">📄</div><div class="t">Choisir un fichier</div><div class="h">JPG · PNG · PDF (multi-pages)</div>
     </div>
@@ -160,20 +123,20 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
       </div>
     </div>
     <div class="langs" id="langs"></div>
-    <p class="note">Les prix, chiffres et marques ne sont jamais modifiés — vérifiés automatiquement. Arabe généré en écriture droite→gauche.</p>
+    <p class="note">Prix, chiffres et marques jamais modifiés — contrôlés automatiquement. Arabe écrit de droite à gauche.</p>
   </div>
 
   <div class="card">
     <h2><span class="n">3</span> Générer</h2>
-    <p class="sub">Cinq agents travaillent : lecture page par page, vérification de l'extraction, traduction native, reconstruction au format exact, contrôle final.</p>
+    <p class="sub">Cinq agents : le Scanneur repère chaque écriture, le Gardien préserve le fond (logos, images, décors intacts), le Traducteur traduit, l'Écrivain réécrit à la même place, le Contrôleur vérifie.</p>
     <div class="agents">
-      <span class="ag" id="agP">📑 Paginateur</span>
-      <span class="ag" id="agA">📐 Architecte</span>
-      <span class="ag" id="agV">🔍 Vérificateur</span>
+      <span class="ag" id="agS">🔎 Scanneur</span>
+      <span class="ag" id="agG">🖼️ Gardien du fond</span>
       <span class="ag" id="agT">🌍 Traducteur</span>
-      <span class="ag" id="agC">🛡️ Contrôle final</span>
+      <span class="ag" id="agE">✍️ Écrivain</span>
+      <span class="ag" id="agC">🛡️ Contrôleur</span>
     </div>
-    <div class="runrow" style="margin-top:14px">
+    <div style="margin-top:14px">
       <button id="runBtn" class="btn btn-primary" disabled>Traduire le document</button>
     </div>
     <div class="status" id="statusLine"></div>
@@ -190,9 +153,9 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
     </div>
   </div>
 
-  <div class="card" id="helpCard">
+  <div class="card">
     <h2>Comment ça marche</h2>
-    <p class="empty-help" style="margin-top:8px"><b>1.</b> Chargez votre document (toutes les pages sont lues, jusqu'à 8). <b>2.</b> Cochez les langues de vos clients. <b>3.</b> Cinq agents reconstruisent votre document à l'identique dans chaque langue : mêmes couleurs, même structure, mêmes prix — un vérificateur relit chaque page et un contrôle final garantit qu'aucun prix n'a bougé. <b>4.</b> Téléchargez chaque version en PDF au format d'origine.</p>
+    <p class="empty-help" style="margin-top:8px"><b>1.</b> Chargez votre document — logos, images et décors resteront exactement tels quels. <b>2.</b> Cochez les langues. <b>3.</b> Le Scanneur localise chaque écriture, le Gardien du fond efface proprement le texte d'origine sans toucher au reste, le Traducteur traduit (prix et marques intacts), l'Écrivain réécrit chaque texte à sa place exacte — même couleur, même alignement — et le Contrôleur vérifie qu'aucun chiffre n'a bougé. <b>4.</b> Téléchargez chaque langue en PDF au format d'origine.</p>
   </div>
 </div></main>
 
@@ -214,9 +177,10 @@ const LANGS=[
 const TOP5=["en","de","it","ru","pl"];
 const HAIKU="claude-haiku-4-5-20251001",SONNET="claude-sonnet-4-6";
 const $=s=>document.querySelector(s);
-let pagesImgs=[], docFormat=null, docPlan=null, results={}, currentLang=null, prixTotal=0;
+/* pages : [{img:HTMLImageElement pleine résolution, b64:miniature pour IA, W,H}] */
+let pages=[], zonesParPage=null, fonds=null, results={}, currentLang=null, nbZones=0;
 
-/* ===== Langues UI ===== */
+/* ===== Langues ===== */
 const langsEl=$("#langs");
 LANGS.forEach(l=>{const b=document.createElement("button");b.className="lang";b.dataset.c=l.c;
   b.innerHTML='<span class="fl">'+l.fl+'</span>'+l.n;
@@ -228,22 +192,27 @@ document.querySelectorAll(".qbtn").forEach(q=>q.onclick=()=>{
     else b.classList.toggle("on",TOP5.includes(b.dataset.c));});syncSel();});
 function selected(){return [...document.querySelectorAll(".lang.on")].map(b=>LANGS.find(l=>l.c===b.dataset.c));}
 function syncSel(){$("#kSel").textContent=selected().length;majBtn();}
-function majBtn(){$("#runBtn").disabled=!(pagesImgs.length&&selected().length);}
+function majBtn(){$("#runBtn").disabled=!(pages.length&&selected().length);}
 
-/* ===== AGENT 1 : Paginateur ===== */
+/* ===== Chargement (Paginateur intégré) ===== */
 const drop=$("#drop"),fileInput=$("#fileInput");
 drop.onclick=()=>fileInput.click();
 drop.onkeydown=e=>{if(e.key==="Enter"||e.key===" ")fileInput.click();};
 $("#relink").onclick=()=>fileInput.click();
+async function imgFromDataUrl(u){const img=new Image();await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=u;});return img;}
+function miniature(img,maxDim){const sc=Math.min(1,maxDim/Math.max(img.width,img.height));
+  const c=document.createElement("canvas");c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
+  c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+  return c.toDataURL("image/jpeg",0.85).split(",")[1];}
 fileInput.onchange=async e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
-  hideErr();setAg("agP","run");
-  $("#fileName").textContent=f.name+" (lecture des pages…)";
+  hideErr();
+  $("#fileName").textContent=f.name+" (lecture…)";
   try{
-    pagesImgs=[];docPlan=null;results={};$("#kDone").textContent="0";$("#kPrix").textContent="—";
-    $("#resultCard").classList.add("hidden");
+    pages=[];zonesParPage=null;fonds=null;results={};currentLang=null;
+    $("#kDone").textContent="0";$("#kZones").textContent="—";$("#resultCard").classList.add("hidden");
     if(f.type==="application/pdf"||/\.pdf$/i.test(f.name)){
-      if(!window.pdfjsLib)throw new Error("Lecture PDF indisponible sur cet appareil — utilise des photos des pages.");
+      if(!window.pdfjsLib)throw new Error("Lecture PDF indisponible — utilise des photos des pages.");
       const buf=await f.arrayBuffer();
       const pdf=await pdfjsLib.getDocument({data:buf}).promise;
       const n=Math.min(pdf.numPages,8);
@@ -251,31 +220,26 @@ fileInput.onchange=async e=>{
         $("#fileName").textContent=f.name+" — page "+i+"/"+n+"…";
         const page=await pdf.getPage(i);
         const vp1=page.getViewport({scale:1});
-        if(i===1)docFormat={w:vp1.width,h:vp1.height};
-        const sc=Math.min(2,1500/Math.max(vp1.width,vp1.height));
+        const sc=Math.min(3,2200/Math.max(vp1.width,vp1.height));
         const vp=page.getViewport({scale:sc});
         const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;
         await page.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
-        pagesImgs.push(c.toDataURL("image/jpeg",0.85).split(",")[1]);
+        const img=await imgFromDataUrl(c.toDataURL("image/jpeg",0.92));
+        pages.push({img:img,b64:miniature(img,1400),W:img.width,H:img.height});
       }
-      if(pdf.numPages>8)$("#pagesInfo").textContent="⚠️ "+pdf.numPages+" pages — les 8 premières sont traitées.";
-      else $("#pagesInfo").textContent="✓ "+n+" page(s) lue(s), format conservé.";
-      $("#previewImg").src="data:image/jpeg;base64,"+pagesImgs[0];
+      $("#pagesInfo").textContent=(pdf.numPages>8?("⚠️ "+pdf.numPages+" pages — 8 premières traitées."):("✓ "+n+" page(s) lue(s)."));
     } else {
       const dataUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result));r.onerror=rej;r.readAsDataURL(f);});
-      const img=new Image();await new Promise(res=>{img.onload=res;img.src=dataUrl;});
-      docFormat={w:img.width,h:img.height};
-      const sc=Math.min(1,1500/Math.max(img.width,img.height));
-      const c=document.createElement("canvas");c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
-      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-      pagesImgs.push(c.toDataURL("image/jpeg",0.85).split(",")[1]);
-      $("#previewImg").src=dataUrl;$("#pagesInfo").textContent="✓ 1 page lue.";
+      const img=await imgFromDataUrl(dataUrl);
+      pages.push({img:img,b64:miniature(img,1400),W:img.width,H:img.height});
+      $("#pagesInfo").textContent="✓ 1 page lue.";
     }
+    $("#previewImg").src=pages[0].img.src;
     $("#fileName").textContent=f.name;
-    $("#kPages").textContent=pagesImgs.length;
+    $("#kPages").textContent=pages.length;
     drop.classList.add("hidden");$("#thumb").classList.remove("hidden");
-    setAg("agP","ok");majBtn();
-  }catch(err){setAg("agP","");showErr(err.message||"Fichier illisible.");}
+    majBtn();
+  }catch(err){showErr(err.message||"Fichier illisible.");}
 };
 
 /* ===== API ===== */
@@ -285,7 +249,7 @@ async function callClaude(model,content,maxTokens){
   let r;
   try{r=await fetchTimeout("/.netlify/functions/translate",{method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({model,max_tokens:maxTokens||2000,messages:[{role:"user",content}]})},30000);
-  }catch(e){if(e.name==="AbortError")throw new Error("Temps limite dépassé sur une étape — relance, ça reprendra.");
+  }catch(e){if(e.name==="AbortError")throw new Error("Temps limite dépassé — relance, ça reprendra où c'était.");
     throw new Error("Impossible de joindre la fonction (réseau).");}
   const raw=await r.text();let data;
   try{data=JSON.parse(raw);}catch(e){throw new Error("Réponse invalide (HTTP "+r.status+").");}
@@ -303,143 +267,203 @@ $("#testBtn").onclick=async()=>{
   finally{$("#testBtn").textContent="Tester la connexion";}
 };
 
-/* ===== Prompt du langage de blocs ===== */
-const BLOCS_SPEC='SCHÉMA DE PAGE (JSON strict) : {"type":"couverture|intercalaire|contenu|decorative","fond":"#hex du fond pleine page","carte":{"fond":"#hex"} ou null si le contenu est posé directement sur le fond,"couleur_texte":"#hex dominant du texte","couleur_titres":"#hex des titres","blocs":[...]}. TYPES DE BLOCS : {"b":"titre","t":"texte","taille":"xl|l|m","align":"center|left|right","couleur":"#hex ou null"} · {"b":"vertical","t":"MOT affiché lettre par lettre à la verticale","couleur":"#hex"} · {"b":"logo","t":"NOM","sous":"sous-texte ou null","couleur":"#hex"} · {"b":"section","t":"titre de section","filet":true|false,"cols":["4CL","1/2L","1L"] ou null si un seul prix,"items":[{"n":"nom","d":"description ou null","p":["prix1","prix2"] (chaque prix TEL QUEL, cases vides = \\"\\") }]} · {"b":"para","t":"paragraphe","align":"center|left","taille":"m|l"} · {"b":"bandeau","t":"texte encadré","fond":"#hex","couleur":"#hex"} · {"b":"espace","taille":"s|m|l"}. RÈGLES : (1) prix recopiés EXACTEMENT chiffre par chiffre ; (2) n\'invente JAMAIS de titre ni de texte ; (3) respecte l\'ordre visuel de haut en bas ; (4) mots mis en évidence entourés de **doubles astérisques** ; (5) noms propres/marques tels quels ; (6) texte illisible = "[illisible]".';
-
 /* ===== Pipeline ===== */
 $("#runBtn").onclick=run;
 async function run(){
-  const langs=selected();if(!pagesImgs.length||!langs.length)return;
+  const langs=selected();if(!pages.length||!langs.length)return;
   hideErr();results={};$("#kDone").textContent="0";
   $("#runBtn").disabled=true;$("#runBtn").textContent="Génération…";
   $("#prog").classList.add("show");
-  const totalSteps=(docPlan?0:pagesImgs.length*1.5)+langs.length*Math.max(1,pagesImgs.length*0.6)+0.5;let step=0;
-  const tick=(label)=>{step++;$("#progFill").style.width=Math.min(100,Math.round(step/totalSteps*100))+"%";$("#progLabel").textContent=label;};
+  const total=(zonesParPage?0:pages.length)+langs.length*pages.length*0.5+1;let step=0;
+  const tick=l=>{step++;$("#progFill").style.width=Math.min(100,Math.round(step/total*100))+"%";$("#progLabel").textContent=l;};
   try{
-    /* AGENT 2+3 : Architecte + Vérificateur (une seule fois par document) */
-    if(!docPlan){
-      docPlan=[];
-      setAg("agA","run");
-      for(let i=0;i<pagesImgs.length;i++){
-        setStatus("Architecte — page "+(i+1)+"/"+pagesImgs.length+"…");
-        const pg=parseJSON(await callClaude(HAIKU,[
-          {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pagesImgs[i]}},
-          {type:"text",text:"Tu es l'Architecte de reconstruction documentaire. Décris cette page EXACTEMENT telle qu'elle est, avec le schéma fourni. "+BLOCS_SPEC+" Réponds UNIQUEMENT avec le JSON de la page, sans markdown."}
-        ],2800));
-        docPlan.push(pg);tick("Page "+(i+1)+" lue ✓");
+    /* AGENT 1 : Scanneur (une fois par document) */
+    if(!zonesParPage){
+      zonesParPage=[];setAg("agS","run");
+      for(let i=0;i<pages.length;i++){
+        setStatus("Scanneur — page "+(i+1)+"/"+pages.length+"…");
+        const out=parseJSON(await callClaude(SONNET,[
+          {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pages[i].b64}},
+          {type:"text",text:"Tu es le Scanneur d'écritures. Repère TOUTES les zones de TEXTE de cette image (ignore logos dessinés, icônes, illustrations, motifs). Pour chaque zone (un paragraphe ou une ligne autonome = une zone), donne sa boîte en POURCENTAGE de l'image (origine en haut-gauche) et ses attributs. Réponds UNIQUEMENT en JSON : {\"zones\":[{\"x\":numéro,\"y\":numéro,\"w\":numéro,\"h\":numéro,\"t\":\"texte EXACT recopié caractère par caractère, avec \\n entre les lignes du même paragraphe\",\"c\":\"#couleur du texte\",\"f\":\"#couleur du fond immédiatement derrière le texte\",\"align\":\"left|center|right\",\"poids\":\"bold|normal\",\"famille\":\"serif|sans|script\"}]}. RÈGLES : (1) x,y,w,h précis avec 1 décimale, la boîte englobe TOUT le texte de la zone sans mordre sur les graphiques voisins ; (2) recopie les textes EXACTEMENT (chiffres, accents, majuscules) ; (3) un texte sur plusieurs lignes = UNE zone avec \\n ; (4) n'invente rien ; (5) si des mots du même paragraphe ont une autre couleur, entoure-les de **astérisques**."}
+        ],3000));
+        zonesParPage.push((out.zones||[]).filter(z=>z.t&&String(z.t).trim()));
+        tick("Page "+(i+1)+" scannée ✓");
       }
-      setAg("agA","ok");setAg("agV","run");
-      /* Vérificateur : uniquement les pages avec du contenu dense */
-      for(let i=0;i<docPlan.length;i++){
-        const pg=docPlan[i];
-        const dense=(pg.blocs||[]).some(b=>b.b==="section");
-        if(!dense){tick("Page "+(i+1)+" — rien à vérifier");continue;}
-        setStatus("Vérificateur — page "+(i+1)+"…");
-        try{
-          const fix=parseJSON(await callClaude(HAIKU,[
-            {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pagesImgs[i]}},
-            {type:"text",text:"Tu es le Vérificateur. Voici l'image d'une page et l'extraction JSON qui en a été faite. Compare LIGNE PAR LIGNE : éléments manquants, prix inexacts, textes erronés. Corrige le JSON et renvoie la version corrigée COMPLÈTE (même schéma), UNIQUEMENT le JSON. Si tout est correct, renvoie le même JSON. EXTRACTION : "+JSON.stringify(pg)}
-          ],2800));
-          if(fix&&fix.blocs)docPlan[i]=fix;
-        }catch(e){/* la version de l'architecte reste */}
-        tick("Page "+(i+1)+" vérifiée ✓");
-      }
-      setAg("agV","ok");
-      prixTotal=comptePrix(docPlan);
+      nbZones=zonesParPage.reduce((s,z)=>s+z.length,0);
+      $("#kZones").textContent=nbZones;
+      setAg("agS","ok");
+      /* AGENT 2 : Gardien du fond (client, sans IA) */
+      setAg("agG","run");setStatus("Gardien du fond — effacement propre des textes…");
+      fonds=pages.map((p,i)=>gommer(p,zonesParPage[i]));
+      setAg("agG","ok");
     }
 
     montreOnglets(langs);
+    /* AGENT 3+4+5 : Traducteur, Écrivain, Contrôleur — par langue */
     setAg("agT","run");
-    /* AGENT 4 : Traducteur — page par page (appels courts, fiables) */
-    const paquet=docPlan.map((pg,i)=>({page:i+1,blocs:extraitTextes(pg)}));
     for(let k=0;k<langs.length;k++){
-      const L=langs[k];
-      setTab(L.c,"load");
+      const L=langs[k];setTab(L.c,"load");
       try{
-        const trPages=await traduireLangue(L,paquet,(msg)=>setStatus("Traducteur "+L.n+" ("+(k+1)+"/"+langs.length+") — "+msg));
-        const verdict=controleFinal(paquet,trPages);
-        results[L.c]={tr:trPages,verdict:verdict};
+        const trad=await traduireLangue(L,(m)=>setStatus("Traducteur "+L.n+" ("+(k+1)+"/"+langs.length+") — "+m));
+        setAg("agE","run");
+        const canvases=pages.map((p,i)=>ecrire(p,fonds[i],zonesParPage[i],trad[i]||[],!!L.rtl));
+        setAg("agE","ok");
+        const verdict=controler(trad);
+        results[L.c]={canvases:canvases,verdict:verdict};
         setTab(L.c,"done");
         $("#kDone").textContent=Object.keys(results).length;
         if(!currentLang){currentLang=L.c;affiche(L.c);}
-      }catch(e){setTab(L.c,"err");console.error(L.c,e);}
-      tick(L.n+(results[L.c]?" ✓":" ✗"));
+        tick(L.n+" ✓");
+      }catch(e){setTab(L.c,"err");console.error(L.c,e);tick(L.n+" ✗");}
     }
     setAg("agT","ok");setAg("agC","ok");
-    const ok=Object.keys(results).length;
     majRapport();
-    setStatus(ok===langs.length?("✓ "+ok+" version(s) générée(s)."):("⚠️ "+ok+"/"+langs.length+" réussies — relance pour compléter."));
-    if(ok&&!currentLang){currentLang=Object.keys(results)[0];affiche(currentLang);}
+    const ok=Object.keys(results).length;
+    setStatus(ok===langs.length?("✓ "+ok+" version(s) prête(s)."):("⚠️ "+ok+"/"+langs.length+" réussies — relance pour compléter."));
   }catch(err){showErr(err.message);setStatus("");}
   finally{$("#runBtn").disabled=false;$("#runBtn").textContent="Traduire le document";}
 }
 
-function extraitTextes(pg){
-  /* on n'envoie à la traduction que ce qui est textuel, structure conservée */
-  return (pg.blocs||[]).map(b=>{
-    if(b.b==="section")return{b:"section",t:b.t,cols:b.cols||null,items:(b.items||[]).map(it=>({n:it.n,d:it.d||null,p:it.p}))};
-    if(b.b==="espace")return{b:"espace",taille:b.taille};
-    const o={b:b.b,t:b.t};if(b.sous)o.sous=b.sous;if(b.align)o.align=b.align;if(b.taille)o.taille=b.taille;return o;
+/* ===== AGENT 2 : Gardien du fond ===== */
+function gommer(page,zones){
+  const c=document.createElement("canvas");c.width=page.W;c.height=page.H;
+  const ctx=c.getContext("2d");
+  ctx.drawImage(page.img,0,0);
+  const data=ctx.getImageData(0,0,c.width,c.height);
+  zones.forEach(z=>{
+    const pad=0.6;
+    const x=Math.max(0,Math.round((z.x-pad)/100*c.width)), y=Math.max(0,Math.round((z.y-pad)/100*c.height));
+    const w=Math.min(c.width-x,Math.round((z.w+pad*2)/100*c.width)), h=Math.min(c.height-y,Math.round((z.h+pad*2)/100*c.height));
+    if(w<=0||h<=0)return;
+    const col=couleurBord(data,c.width,c.height,x,y,w,h);
+    ctx.fillStyle=col;ctx.fillRect(x,y,w,h);
+    z._px={x:x,y:y,w:w,h:h};
   });
+  return c;
 }
-function tailleTexte(p){return JSON.stringify(p.blocs||[]).length;}
-const REGLES_TRAD="RÈGLES ABSOLUES : (1) PRIX, chiffres, téléphones : identiques au caractère près, jamais convertis, jamais déplacés. (2) MARQUES et noms propres (enseignes, alcools, vins) : jamais traduits ni translittérés. (3) Plats/mots internationaux (Pasta, Pizza, Tapas, Frutti di Mare, Couscous, Ojja…) : gardés tels quels ; seules leurs descriptions se traduisent. (4) Traduction de métier, naturelle, comme écrite par un natif. (5) Conserve les **astérisques** autour des mêmes mots. (6) Rien omis, rien ajouté, même structure JSON exactement (mêmes types 'b', mêmes clés).";
-async function appelTrad(L,pages,maxTok){
-  const out=parseJSON(await callClaude(SONNET,[
-    {type:"text",text:"Tu es traducteur professionnel natif (hôtellerie, restauration, supports commerciaux). Traduis en "+L.n+" ("+L.c+") UNIQUEMENT les valeurs textuelles. "+REGLES_TRAD+" PAGES : "+JSON.stringify(pages)+" Réponds UNIQUEMENT en JSON : {\"pages\":[{\"page\":N,\"blocs\":[…]}]} — même structure, textes traduits."}
-  ],maxTok));
-  return Array.isArray(out)?out:(out.pages||[]);
+function couleurBord(data,W,H,x,y,w,h){
+  /* médiane des pixels du pourtour de la boîte = couleur du fond local */
+  const pts=[];const step=Math.max(2,Math.round(w/40));
+  for(let i=x;i<x+w;i+=step){pts.push(px(data,W,i,Math.max(0,y-3)));pts.push(px(data,W,i,Math.min(H-1,y+h+3)));}
+  const stepY=Math.max(2,Math.round(h/24));
+  for(let j=y;j<y+h;j+=stepY){pts.push(px(data,W,Math.max(0,x-3),j));pts.push(px(data,W,Math.min(W-1,x+w+3),j));}
+  const med=k=>{const a=pts.map(p=>p[k]).sort((u,v)=>u-v);return a[Math.floor(a.length/2)]||255;};
+  return "rgb("+med(0)+","+med(1)+","+med(2)+")";
 }
-async function traduireLangue(L,paquet,onMsg){
-  const legers=paquet.filter(p=>tailleTexte(p)<180);
-  const denses=paquet.filter(p=>tailleTexte(p)>=180);
+function px(data,W,x,y){const i=(y*W+x)*4;return[data.data[i],data.data[i+1],data.data[i+2]];}
+
+/* ===== AGENT 3 : Traducteur ===== */
+const REGLES="RÈGLES ABSOLUES : (1) PRIX, chiffres, téléphones, devises : identiques au caractère près. (2) MARQUES et noms propres (enseignes, hôtels, alcools, vins) : jamais traduits ni translittérés. (3) Plats/mots internationaux (Pasta, Pizza, Tapas, Couscous, Frutti di Mare…) : gardés tels quels. (4) Traduction naturelle de métier, comme un natif. (5) Garde les \\n aux mêmes endroits logiques et les **astérisques** autour des mêmes mots. (6) Une entrée = une sortie, même id, rien d'omis.";
+async function traduireLangue(L,onMsg){
   const out=[];
-  if(legers.length){
-    onMsg("pages de titre…");
-    try{(await appelTrad(L,legers,1500)).forEach(p=>{if(p&&p.blocs)out.push(p);});}
-    catch(e){legers.forEach(p=>out.push({page:p.page,blocs:p.blocs,echec:true}));}
-  }
-  for(let i=0;i<denses.length;i++){
-    onMsg("page "+denses[i].page+"…");
-    let done=false;
+  for(let i=0;i<pages.length;i++){
+    const zs=zonesParPage[i];
+    if(!zs.length){out.push([]);continue;}
+    onMsg("page "+(i+1)+"…");
+    const paquet=zs.map((z,j)=>({id:j,t:z.t}));
+    let done=null;
     for(let essai=0;essai<2&&!done;essai++){
       try{
-        const arr=await appelTrad(L,[denses[i]],2400);
-        if(arr[0]&&arr[0].blocs){out.push({page:denses[i].page,blocs:arr[0].blocs});done=true;}
-      }catch(e){/* on retente une fois */}
+        const r=parseJSON(await callClaude(SONNET,[
+          {type:"text",text:"Traducteur professionnel natif (hôtellerie, restauration, commerce). Traduis en "+L.n+" ("+L.c+") chaque texte. "+REGLES+" TEXTES : "+JSON.stringify(paquet)+" Réponds UNIQUEMENT en JSON : {\"zones\":[{\"id\":n,\"t\":\"traduction\"}]}"}
+        ],2400));
+        const arr=r.zones||[];
+        if(arr.length)done=zs.map((z,j)=>{const f=arr.find(a=>a.id===j);return f&&f.t?String(f.t):z.t;});
+      }catch(e){}
     }
-    if(!done)out.push({page:denses[i].page,blocs:denses[i].blocs,echec:true});
+    out.push(done||zs.map(z=>z.t));
+    if(!done)out[out.length-1]._echec=true;
   }
-  out.sort((a,b)=>(a.page||0)-(b.page||0));
-  if(out.every(p=>p.echec))throw new Error("Traduction impossible pour "+L.n);
   return out;
 }
-function comptePrix(plan){let n=0;plan.forEach(pg=>(pg.blocs||[]).forEach(b=>{if(b.b==="section")(b.items||[]).forEach(it=>(it.p||[]).forEach(p=>{if(String(p).trim())n++;}));}));return n;}
-function tousPrix(pages){const arr=[];(pages||[]).forEach(pg=>(pg.blocs||[]).forEach(b=>{if(b.b==="section")(b.items||[]).forEach(it=>(it.p||[]).forEach(p=>arr.push(String(p).trim())));}));return arr;}
-function controleFinal(orig,trPages){
-  const a=tousPrix(orig),b=tousPrix(trPages);
-  const prixOk=a.length===b.length&&a.every((p,i)=>p===b[i]);
-  const structOk=trPages.length===orig.length&&!trPages.some(p=>p.echec);
-  return{prixOk:prixOk,nbPrix:a.length,structOk:structOk,pagesEchec:trPages.filter(p=>p.echec).map(p=>p.page)};
+
+/* ===== AGENT 4 : Écrivain ===== */
+function ecrire(page,fond,zones,textes,rtl){
+  const c=document.createElement("canvas");c.width=page.W;c.height=page.H;
+  const ctx=c.getContext("2d");
+  ctx.drawImage(fond,0,0);
+  zones.forEach((z,j)=>{
+    const t=String(textes[j]!=null?textes[j]:z.t).replace(/\*\*/g,"");
+    const box=z._px||{x:z.x/100*c.width,y:z.y/100*c.height,w:z.w/100*c.width,h:z.h/100*c.height};
+    dessineTexte(ctx,t,box,z,rtl,c.width);
+  });
+  return c;
 }
-function majRapport(){
-  const langsOk=Object.keys(results);if(!langsOk.length)return;
-  const tousOk=langsOk.every(c=>results[c].verdict.prixOk&&results[c].verdict.structOk);
-  const r=$("#report");
-  r.className="report show"+(tousOk?"":" warn");
-  let txt=(tousOk?"✓ Contrôle final : ":"⚠️ Contrôle : ")+pagesImgs.length+" page(s) · "+langsOk.length+" langue(s) · "+prixTotal+" prix vérifiés — ";
-  if(tousOk)txt+="aucun prix modifié, structure conforme.";
-  else{
-    const soucis=langsOk.filter(c=>!results[c].verdict.structOk||!results[c].verdict.prixOk)
-      .map(c=>{const L=LANGS.find(x=>x.c===c);const v=results[c].verdict;
-        return L.n+(v.pagesEchec&&v.pagesEchec.length?" (page "+v.pagesEchec.join(", ")+" restée en langue d'origine)":"")+(v.prixOk?"":" (prix à revérifier)");}).join(" · ");
-    txt+="à revoir : "+soucis+". Relance « Traduire » pour compléter.";
+function dessineTexte(ctx,texte,box,z,rtl,W){
+  const fam=z.famille==="serif"?'Georgia,"Times New Roman",serif':(z.famille==="script"?'"Segoe Script","Comic Sans MS",cursive':'Inter,Arial,sans-serif');
+  const poids=z.poids==="bold"?"700 ":"400 ";
+  const lignesSrc=texte.split(/\n/).filter(s=>s.trim().length);
+  const nLignes=Math.max(1,lignesSrc.length||1);
+  let size=Math.min(box.h/nLignes*0.78,box.h*0.9);
+  ctx.textBaseline="middle";
+  if(rtl){ctx.direction="rtl";}else{ctx.direction="ltr";}
+  /* auto-ajustement : réduire la taille jusqu'à ce que chaque ligne (après wrap) tienne */
+  let lignes=[];
+  for(let essai=0;essai<24;essai++){
+    ctx.font=poids+size+"px "+fam;
+    lignes=[];
+    lignesSrc.forEach(ls=>{lignes.push(...wrap(ctx,ls.trim(),box.w*0.98));});
+    if(!lignes.length)lignes=[""];
+    const hTotal=lignes.length*size*1.22;
+    const wMax=Math.max(...lignes.map(l=>ctx.measureText(l).width));
+    if(hTotal<=box.h*1.06&&wMax<=box.w*1.01)break;
+    size*=0.93;
   }
-  r.textContent=txt;
-  $("#kPrix").textContent=prixTotal+" ✓";
+  ctx.fillStyle=z.c||"#222";
+  const lh=size*1.22;
+  const y0=box.y+box.h/2-(lignes.length-1)*lh/2;
+  lignes.forEach((l,i)=>{
+    let x;
+    if(z.align==="center"){ctx.textAlign="center";x=box.x+box.w/2;}
+    else if((z.align==="right"&&!rtl)||(rtl&&z.align!=="left")){ctx.textAlign="right";x=box.x+box.w;}
+    else{ctx.textAlign="left";x=box.x;}
+    ctx.fillText(l,x,y0+i*lh);
+  });
+}
+function wrap(ctx,texte,maxW){
+  const mots=texte.split(/\s+/);const out=[];let cur="";
+  mots.forEach(m=>{
+    const test=cur?cur+" "+m:m;
+    if(ctx.measureText(test).width<=maxW||!cur)cur=test;
+    else{out.push(cur);cur=m;}
+  });
+  if(cur)out.push(cur);
+  return out;
 }
 
-/* ===== Rendu / reconstruction ===== */
+/* ===== AGENT 5 : Contrôleur (code pur) ===== */
+function chiffres(s){return (String(s).match(/\d[\d.,]*/g)||[]).map(x=>x.replace(/[.,]$/,""));}
+function controler(trad){
+  let zonesOk=0,zonesTot=0,chiffresKO=0,pagesEchec=[];
+  zonesParPage.forEach((zs,i)=>{
+    if(trad[i]&&trad[i]._echec)pagesEchec.push(i+1);
+    zs.forEach((z,j)=>{
+      zonesTot++;
+      const t=trad[i]&&trad[i][j];
+      if(t&&String(t).trim())zonesOk++;
+      const a=chiffres(z.t).sort().join("|"),b=chiffres(t||"").sort().join("|");
+      if(a!==b)chiffresKO++;
+    });
+  });
+  return{zonesOk:zonesOk,zonesTot:zonesTot,chiffresKO:chiffresKO,pagesEchec:pagesEchec};
+}
+function majRapport(){
+  const cs=Object.keys(results);if(!cs.length)return;
+  const tousOk=cs.every(c=>{const v=results[c].verdict;return v.zonesOk===v.zonesTot&&v.chiffresKO===0&&!v.pagesEchec.length;});
+  const r=$("#report");
+  r.className="report show"+(tousOk?"":" warn");
+  if(tousOk){
+    r.textContent="✓ Contrôle final : "+pages.length+" page(s) · "+cs.length+" langue(s) · "+nbZones+" zones de texte · visuel d'origine préservé · aucun chiffre modifié.";
+  }else{
+    const soucis=cs.map(c=>{const v=results[c].verdict;const L=LANGS.find(x=>x.c===c);const p=[];
+      if(v.pagesEchec.length)p.push("page "+v.pagesEchec.join(", ")+" non traduite");
+      if(v.chiffresKO)p.push(v.chiffresKO+" zone(s) à revérifier (chiffres)");
+      return p.length?(L.n+" : "+p.join(" · ")):null;}).filter(Boolean).join(" — ");
+    r.textContent="⚠️ Contrôle : "+(soucis||"vérification partielle")+". Relance « Traduire » pour compléter.";
+  }
+}
+
+/* ===== Affichage & export ===== */
 function montreOnglets(langs){
   $("#resultCard").classList.remove("hidden");
   const tabs=$("#tabs");tabs.innerHTML="";
@@ -452,85 +476,34 @@ function montreOnglets(langs){
 function setTab(c,s){const t=document.querySelector('.tab[data-c="'+c+'"]');if(!t)return;
   t.classList.remove("load","done");if(s==="load")t.classList.add("load");
   if(s==="done")t.classList.add("done");if(s==="err")t.style.opacity=".45";}
-function setAg(id,s){const el=$("#"+id);el.className="ag"+(s?(" "+s):"");}
+function setAg(id,s){$("#"+id).className="ag"+(s?(" "+s):"");}
 function setStatus(t){$("#statusLine").textContent=t;}
 function showErr(m){const e=$("#errBox");e.textContent="⚠️ "+m;e.classList.add("show");}
 function hideErr(){$("#errBox").classList.remove("show");}
-
-function rendPage(pg,blocsTraduits,rtl){
-  const fond=pg.fond||"#fff", cTexte=pg.couleur_texte||"#222", cTitres=pg.couleur_titres||cTexte;
-  const ratio=docFormat?(docFormat.h/docFormat.w):1.414;
-  const d=document.createElement("div");
-  d.className="rp"+(rtl?" rtl":"");
-  d.style.background=fond;d.style.color=cTexte;d.style.aspectRatio=(1/ratio);
-  d.style.fontSize="1em";
-  const inner=document.createElement("div");inner.className="inner";
-  let zone=inner;
-  if(pg.carte){const cz=document.createElement("div");cz.className="cardzone";cz.style.background=pg.carte.fond||"#fff";inner.appendChild(cz);zone=cz;}
-  const centre=["couverture","intercalaire","decorative"].includes(pg.type);
-  if(centre)zone.classList.add("center");
-  const hl=(s,acc)=>esc(s).replace(/\*\*(.+?)\*\*/g,'<span class="b-hl"'+(acc?' style="color:'+acc+'"':'')+'>$1</span>');
-  (blocsTraduits||[]).forEach(b=>{
-    let el=null;
-    if(b.b==="titre"){el=document.createElement("div");el.className="b-titre "+(b.taille||"l");
-      el.style.color=b.couleur||cTitres;if(b.align)el.style.textAlign=b.align;el.innerHTML=hl(b.t);}
-    else if(b.b==="vertical"){el=document.createElement("div");el.className="b-vert";el.style.color=b.couleur||cTitres;
-      const chars=rtl?[String(b.t||"")]:String(b.t||"").split("");
-      el.innerHTML=chars.map(ch=>"<span>"+esc(ch)+"</span>").join("");}
-    else if(b.b==="logo"){el=document.createElement("div");el.className="b-logo";el.style.color=b.couleur||cTitres;
-      el.innerHTML=esc(b.t||"")+(b.sous?"<small>"+esc(b.sous)+"</small>":"");}
-    else if(b.b==="section"){el=document.createElement("div");el.className="b-sec";
-      let h='<div class="st" style="color:'+cTitres+';border-color:'+cTitres+'55">'+hl(b.t||"")+'</div>';
-      if(b.cols&&b.cols.length)h+='<div class="cols">'+b.cols.map(c=>"<span>"+esc(c)+"</span>").join("")+'</div>';
-      (b.items||[]).forEach(it=>{
-        const prs=(it.p||[]).filter(p=>String(p).trim()!=="");
-        h+='<div class="it"><div><div class="nm">'+hl(it.n||"")+'</div>'+(it.d?'<div class="ds">'+hl(it.d)+'</div>':'')+'</div>'
-          +(prs.length?'<div class="prs">'+ (it.p||[]).map(p=>"<span>"+esc(p)+"</span>").join("") +'</div>':'')+'</div>';
-      });
-      el.innerHTML=h;}
-    else if(b.b==="para"){el=document.createElement("div");el.className="b-para";
-      if(b.align)el.style.textAlign=b.align;if(b.taille==="l")el.style.fontSize="1.05em";el.innerHTML=hl(b.t);}
-    else if(b.b==="bandeau"){el=document.createElement("div");el.className="b-band";
-      el.style.background=b.fond||cTitres;el.style.color=b.couleur||"#fff";el.innerHTML=hl(b.t,"#F5C26B");}
-    else if(b.b==="espace"){el=document.createElement("div");el.className="b-esp "+(b.taille||"m");}
-    if(el)zone.appendChild(el);
-  });
-  d.appendChild(inner);
-  return d;
-}
 function affiche(c){
-  const L=LANGS.find(x=>x.c===c),R=results[c];if(!R)return;
+  const R=results[c];if(!R)return;
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.dataset.c===c));
-  const trPages=Array.isArray(R.tr)?R.tr:(R.tr.pages||[]);
-  const view=$("#pagesview");view.innerHTML="";
-  docPlan.forEach((pg,i)=>{
-    const tp=trPages.find(p=>p.page===i+1)||trPages[i]||{};
-    const wrap=document.createElement("div");wrap.className="sheetpage";
-    const page=rendPage(pg,tp.blocs||extraitTextes(pg),!!L.rtl);
-    page.style.fontSize="13px";
-    wrap.appendChild(page);view.appendChild(wrap);
-  });
+  const v=$("#pagesview");v.innerHTML="";
+  R.canvases.forEach(cv=>v.appendChild(cv));
 }
-
-/* ===== Export PDF multi-pages ===== */
 $("#pdfBtn").onclick=()=>{
   if(!currentLang||!results[currentLang])return;
-  const L=LANGS.find(x=>x.c===currentLang),R=results[currentLang];
-  const trPages=Array.isArray(R.tr)?R.tr:(R.tr.pages||[]);
+  const R=results[currentLang];
   const root=$("#printroot");root.innerHTML="";
-  const wmm=docFormat?Math.round(docFormat.w*0.3528):210, hmm=docFormat?Math.round(docFormat.h*0.3528):297;
+  const wmm=Math.round(pages[0].W/pages[0].H*297*(pages[0].W>pages[0].H?0:1))||210;
+  /* format : on cale la page d'impression sur le ratio du document */
+  const ratio=pages[0].H/pages[0].W;
+  const pw=210, ph=Math.round(210*ratio);
   let st=document.getElementById("printsize");
   if(!st){st=document.createElement("style");st.id="printsize";document.head.appendChild(st);}
-  st.textContent="@page{size:"+wmm+"mm "+hmm+"mm;margin:0}";
-  docPlan.forEach((pg,i)=>{
-    const tp=trPages.find(p=>p.page===i+1)||trPages[i]||{};
-    const page=rendPage(pg,tp.blocs||extraitTextes(pg),!!L.rtl);
-    page.style.fontSize=(wmm/13)+"px";
-    root.appendChild(page);
+  st.textContent="@page{size:"+pw+"mm "+ph+"mm;margin:0}";
+  R.canvases.forEach(cv=>{
+    const im=document.createElement("img");
+    im.src=cv.toDataURL("image/jpeg",0.93);
+    root.appendChild(im);
   });
-  setTimeout(()=>window.print(),400);
+  setTimeout(()=>window.print(),500);
 };
-function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 </script>
 </body>
 </html>
