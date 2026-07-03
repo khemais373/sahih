@@ -1,109 +1,122 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Scandar Translate — Menus & affiches multilingues</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Scandar Translate — Documents multilingues identiques</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#F4F6F9;--card:#FFFFFF;--line:#E6EAF0;--ink:#0F1E2E;--soft:#64748B;
-  --blue:#2563EB;--blue-d:#1D4ED8;--blue-bg:#EFF4FF;
-  --green:#16A34A;--green-bg:#EAF7EF;--amber:#B45309;--amber-bg:#FEF3E2;--red:#B91C1C;--red-bg:#FDECEC;
-}
+:root{--bg:#F4F6F9;--card:#fff;--line:#E6EAF0;--ink:#0F1E2E;--soft:#64748B;
+--blue:#2563EB;--blue-d:#1D4ED8;--blue-bg:#EFF4FF;
+--green:#16A34A;--green-bg:#EAF7EF;--amber:#B45309;--amber-bg:#FEF3E2;--red:#B91C1C;--red-bg:#FDECEC}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1100px;margin:0 auto;padding:0 18px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
 header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
-header .in{max-width:1100px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.01em}
-.logo .ic{width:34px;height:34px;border-radius:10px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800}
-.logo small{display:block;font-size:10.5px;color:var(--soft);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
-.testlink{font-size:12.5px;font-weight:600;color:var(--blue);background:var(--blue-bg);border:none;border-radius:8px;padding:8px 13px;cursor:pointer}
-main{padding:22px 0 70px}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+header .in{max-width:1100px;margin:0 auto;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px}
+.logo .ic{width:33px;height:33px;border-radius:10px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+.logo small{display:block;font-size:10px;color:var(--soft);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.testlink{font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-bg);border:none;border-radius:8px;padding:8px 12px;cursor:pointer}
+main{padding:18px 0 70px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
 @media(max-width:720px){.kpis{grid-template-columns:1fr 1fr}}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px;display:flex;justify-content:space-between;align-items:center}
-.kpi .l{font-size:12px;color:var(--soft);font-weight:600}
-.kpi .v{font-size:24px;font-weight:800;margin-top:2px}
-.kpi .b{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.kpi .b.blue{background:var(--blue-bg)}.kpi .b.green{background:var(--green-bg)}.kpi .b.amber{background:var(--amber-bg)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
-.card h2{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
-.card h2 .n{width:22px;height:22px;border-radius:7px;background:var(--blue);color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
-.card .sub{font-size:12.5px;color:var(--soft);margin:4px 0 14px}
-.drop{border:1.5px dashed #C3CFDE;border-radius:12px;padding:26px 16px;text-align:center;cursor:pointer;transition:.15s;background:#FAFBFD}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 14px}
+.kpi .l{font-size:11px;color:var(--soft);font-weight:600}
+.kpi .v{font-size:21px;font-weight:800;margin-top:1px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+.card h2{font-size:15.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card h2 .n{width:21px;height:21px;border-radius:7px;background:var(--blue);color:#fff;font-size:11.5px;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
+.card .sub{font-size:12.5px;color:var(--soft);margin:3px 0 12px}
+.drop{border:1.5px dashed #C3CFDE;border-radius:12px;padding:24px 14px;text-align:center;cursor:pointer;background:#FAFBFD}
 .drop:hover{border-color:var(--blue);background:var(--blue-bg)}
-.drop .ic{font-size:26px}.drop .t{font-weight:700;font-size:14px;margin-top:8px}.drop .h{font-size:12px;color:var(--soft);margin-top:3px}
-.thumb{display:flex;gap:13px;align-items:center}
-.thumb img{width:82px;height:82px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.drop .ic{font-size:24px}.drop .t{font-weight:700;font-size:14px;margin-top:7px}.drop .h{font-size:11.5px;color:var(--soft);margin-top:3px}
+.thumb{display:flex;gap:12px;align-items:center}
+.thumb img{width:74px;height:74px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
 .fn{font-size:12px;color:var(--soft);word-break:break-all}
-.relink{color:var(--blue);font-weight:600;font-size:12.5px;cursor:pointer;background:none;border:none;padding:0;margin-top:6px}
-.langs{display:flex;flex-wrap:wrap;gap:8px}
-.lang{display:flex;align-items:center;gap:6px;padding:8px 12px;border:1.5px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;transition:.12s;user-select:none}
-.lang:hover{border-color:#B9C6D8}
+.relink{color:var(--blue);font-weight:600;font-size:12px;cursor:pointer;background:none;border:none;padding:0;margin-top:5px}
+.pagesinfo{font-size:12px;color:var(--green);font-weight:700;margin-top:4px}
+.langs{display:flex;flex-wrap:wrap;gap:7px}
+.lang{display:flex;align-items:center;gap:6px;padding:7px 11px;border:1.5px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;font-size:12.5px;font-weight:600;user-select:none}
 .lang.on{border-color:var(--blue);background:var(--blue-bg);color:var(--blue-d)}
-.lang .fl{font-size:15px}
-.langbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.quick{display:flex;gap:8px}
-.qbtn{font-size:11.5px;font-weight:700;color:var(--soft);background:#F1F4F8;border:none;border-radius:7px;padding:6px 10px;cursor:pointer}
-.qbtn:hover{color:var(--blue)}
-.btn{font-family:inherit;font-size:14px;font-weight:700;padding:12px 22px;border-radius:10px;border:none;cursor:pointer;transition:.15s}
-.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-d)}
-.btn-primary:disabled{background:#B9C6D8;cursor:not-allowed}
-.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
-.runrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.lang .fl{font-size:14px}
+.langbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:11px}
+.quick{display:flex;gap:7px}
+.qbtn{font-size:11px;font-weight:700;color:var(--soft);background:#F1F4F8;border:none;border-radius:7px;padding:6px 9px;cursor:pointer}
+.btn{font-family:inherit;font-size:14px;font-weight:700;padding:12px 20px;border-radius:10px;border:none;cursor:pointer}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:disabled{background:#B9C6D8;cursor:not-allowed}
+.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
 .status{font-size:12.5px;color:var(--blue-d);font-weight:600;min-height:18px;margin-top:10px}
 .diag{font-size:12px;margin-top:8px;padding:9px 11px;border-radius:8px;display:none}
 .diag.ok{display:block;background:var(--green-bg);color:var(--green)}
 .diag.ko{display:block;background:var(--red-bg);color:var(--red)}
-.prog{display:none;margin-top:12px}
-.prog.show{display:block}
+.prog{display:none;margin-top:11px}.prog.show{display:block}
 .pbar{height:8px;background:#EDF1F6;border-radius:6px;overflow:hidden}
-.pbar .f{height:100%;width:0;background:linear-gradient(90deg,var(--blue),#60A5FA);border-radius:6px;transition:width .4s}
-.plabel{font-size:12px;color:var(--soft);margin-top:6px;font-weight:600}
-.err{background:var(--red-bg);border:1px solid #F3C6C4;color:var(--red);padding:12px 14px;border-radius:10px;font-size:13.5px;margin-bottom:16px;display:none}
+.pbar .f{height:100%;width:0;background:linear-gradient(90deg,var(--blue),#60A5FA);transition:width .4s}
+.plabel{font-size:11.5px;color:var(--soft);margin-top:6px;font-weight:600}
+.agents{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.ag{font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;background:#F1F4F8;color:var(--soft)}
+.ag.run{background:var(--amber-bg);color:var(--amber)}
+.ag.ok{background:var(--green-bg);color:var(--green)}
+.err{background:var(--red-bg);border:1px solid #F3C6C4;color:var(--red);padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:14px;display:none}
 .err.show{display:block}
+.report{display:none;background:var(--green-bg);border:1px solid #BFE3CD;border-radius:12px;padding:13px 15px;font-size:12.5px;color:#14532D;margin-bottom:12px;font-weight:600}
+.report.warn{background:var(--amber-bg);border-color:#EAD3B3;color:var(--amber)}
+.report.show{display:block}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.tab{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:8px 14px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.tab{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer}
 .tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .tab .st{width:7px;height:7px;border-radius:50%;background:#CBD5E1}
 .tab.done .st{background:var(--green)}
 .tab.load .st{background:var(--amber);animation:blink 1s infinite}
 @keyframes blink{50%{opacity:.3}}
-.preview{border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.pv-actions{display:flex;gap:10px;flex-wrap:wrap;padding:12px 14px;background:#FAFBFD;border-top:1px solid var(--line)}
-.docsheet{padding:34px 30px;min-height:280px}
-.docsheet.rtl{direction:rtl;text-align:right}
-.docsheet.rtl *{letter-spacing:0!important}
-.doc-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;text-align:center;letter-spacing:.01em}
-.docsheet.rtl .doc-title{font-family:'Inter',system-ui,sans-serif;font-weight:800}
-.doc-sub{text-align:center;font-size:13px;opacity:.75;margin-top:5px;text-transform:uppercase;letter-spacing:.14em}
-.docsheet.rtl .doc-sub{text-transform:none}
-.doc-sep{width:56px;height:2.5px;margin:16px auto 22px;border-radius:2px}
-.sec{margin-bottom:22px}
-.sec-t{font-family:'Playfair Display',serif;font-size:19px;font-weight:600;padding-bottom:6px;border-bottom:1.5px solid;margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline}
-.docsheet.rtl .sec-t{font-family:'Inter',system-ui,sans-serif;font-weight:700}
-.item{display:flex;justify-content:space-between;gap:14px;padding:7px 0;align-items:baseline}
-.item .in .nm{font-weight:600;font-size:14.5px}
-.item .in .ds{font-size:12.5px;opacity:.72;margin-top:2px}
-.item .pr{font-weight:700;font-size:14.5px;white-space:nowrap}
-.dots{flex:1;border-bottom:1.5px dotted rgba(0,0,0,.22);transform:translateY(-4px);min-width:20px}
-.freeblock{font-size:14px;line-height:1.8;margin-bottom:16px;white-space:pre-wrap}
-/* Mode AFFICHE : blocs centrés, grands, mots forts en accent */
-.docsheet.affiche .freeblock{font-size:17px;line-height:1.75;text-align:center;max-width:560px;margin:0 auto 22px}
-.docsheet.affiche .doc-title{font-size:34px}
-.docsheet.affiche .highlight-band{border-radius:14px;padding:18px 22px;margin:0 auto 22px;max-width:600px;font-size:16.5px;line-height:1.7;text-align:center;font-weight:600}
-.hl{font-weight:800}
-.doc-foot{text-align:center;font-size:12px;opacity:.7;margin-top:26px;font-style:italic}
-@page{margin:0}
-
-.note{font-size:11.5px;color:var(--soft);margin-top:12px}
+.pagesview{display:flex;flex-direction:column;gap:16px;align-items:center;background:#EBEFF4;border:1px solid var(--line);border-radius:14px;padding:18px 10px;max-height:70vh;overflow:auto}
+.sheetpage{width:min(380px,92vw);box-shadow:0 10px 30px -12px rgba(15,30,46,.35);border-radius:4px;overflow:hidden;flex:none;position:relative}
+.pv-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.note{font-size:11px;color:var(--soft);margin-top:10px}
 .hidden{display:none}
-.empty-help{font-size:13px;color:var(--soft);line-height:1.7}
-.empty-help b{color:var(--ink)}
+.empty-help{font-size:13px;color:var(--soft);line-height:1.7}.empty-help b{color:var(--ink)}
 button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-@media print{body *{visibility:hidden}} 
+
+/* ===== Rendu des pages reconstruites ===== */
+.rp{position:relative;width:100%;display:flex;flex-direction:column;overflow:hidden}
+.rp.rtl{direction:rtl}
+.rp.rtl *{letter-spacing:0!important}
+.rp .inner{flex:1;display:flex;flex-direction:column;padding:7% 8%}
+.rp .cardzone{background:#fff;flex:1;display:flex;flex-direction:column;padding:8% 9%;border-radius:2px}
+.rp .center{justify-content:center;align-items:center;text-align:center}
+.rp .b-titre{font-family:'Cormorant Garamond','Playfair Display',serif;font-weight:600;line-height:1.15}
+.rp.rtl .b-titre{font-family:'Inter',sans-serif;font-weight:800}
+.rp .b-titre.xl{font-size:2.6em;letter-spacing:.35em;text-indent:.35em}
+.rp .b-titre.l{font-size:1.7em;letter-spacing:.14em}
+.rp .b-titre.m{font-size:1.2em}
+.rp.rtl .b-titre.xl,.rp.rtl .b-titre.l{letter-spacing:0!important;text-indent:0}
+.rp .b-vert{font-family:'Inter',sans-serif;font-weight:500;font-size:2em;letter-spacing:.1em;display:flex;flex-direction:column;align-items:center;gap:.55em}
+.rp .b-vert span{display:block;line-height:1}
+.rp .b-logo{font-family:'Cormorant Garamond',serif;font-size:2em;letter-spacing:.3em;text-indent:.3em;font-weight:500}
+.rp .b-logo small{display:block;font-size:.34em;letter-spacing:.9em;text-indent:.9em;margin-top:.5em;font-weight:400}
+.rp .b-sec{margin-bottom:1.4em}
+.rp .b-sec .st{font-family:'Cormorant Garamond',serif;font-size:1.25em;letter-spacing:.06em;padding-bottom:.25em;border-bottom:1px solid;margin-bottom:.6em;display:inline-block;min-width:46%}
+.rp.rtl .b-sec .st{font-family:'Inter',sans-serif;font-weight:700}
+.rp .cols{display:flex;justify-content:flex-end;gap:1.4em;font-size:.62em;font-weight:600;opacity:.85;margin:-1.6em 0 .6em}
+.rp.rtl .cols{justify-content:flex-start}
+.rp .it{display:flex;justify-content:space-between;gap:1em;padding:.28em 0;align-items:baseline}
+.rp .it .nm{font-size:.74em;letter-spacing:.05em;text-transform:uppercase}
+.rp.rtl .it .nm{text-transform:none;letter-spacing:0}
+.rp .it .ds{font-size:.6em;opacity:.7;margin-top:.15em;text-transform:none;letter-spacing:0}
+.rp .it .prs{display:flex;gap:1.4em;font-size:.72em;font-weight:600;white-space:nowrap}
+.rp .b-para{font-size:.85em;line-height:1.75;margin-bottom:1em;white-space:pre-wrap}
+.rp .b-band{border-radius:.55em;padding:.9em 1.1em;margin-bottom:1em;font-size:.85em;line-height:1.6;font-weight:600;text-align:center}
+.rp .b-esp.s{height:1em}.rp .b-esp.m{height:2.2em}.rp .b-esp.l{height:4em}
+.rp .b-hl{font-weight:800}
+@page{margin:0}
+@media print{
+  body{background:#fff}
+  body>*{display:none!important}
+  #printroot{display:block!important}
+  #printroot .rp{page-break-after:always;width:100%;height:100vh}
+}
+#printroot{display:none}
 </style>
 </head>
 <body>
@@ -113,24 +126,25 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
 </div></header>
 
 <main><div class="wrap">
-
   <div class="kpis">
-    <div class="kpi"><div><div class="l">Langues disponibles</div><div class="v">20</div></div><span class="b blue">🌍</span></div>
-    <div class="kpi"><div><div class="l">Langues sélectionnées</div><div class="v" id="kpiSel">0</div></div><span class="b green">✓</span></div>
-    <div class="kpi"><div><div class="l">Traductions prêtes</div><div class="v" id="kpiDone">0</div></div><span class="b amber">📄</span></div>
+    <div class="kpi"><div class="l">Pages lues</div><div class="v" id="kPages">0</div></div>
+    <div class="kpi"><div class="l">Langues choisies</div><div class="v" id="kSel">0</div></div>
+    <div class="kpi"><div class="l">Versions prêtes</div><div class="v" id="kDone">0</div></div>
+    <div class="kpi"><div class="l">Prix vérifiés</div><div class="v" id="kPrix">—</div></div>
   </div>
 
   <div class="err" id="errBox"></div>
 
   <div class="card">
     <h2><span class="n">1</span> Votre document</h2>
-    <p class="sub">Menu, affiche, flyer, carte des soins… Image (JPG/PNG) ou PDF.</p>
+    <p class="sub">Menu, affiche, tarifs, flyer… Image ou PDF jusqu'à 8 pages. Le format d'origine est conservé.</p>
     <div id="drop" class="drop" tabindex="0" role="button">
-      <div class="ic">📄</div><div class="t">Choisir un fichier</div><div class="h">JPG · PNG · PDF (1ʳᵉ page)</div>
+      <div class="ic">📄</div><div class="t">Choisir un fichier</div><div class="h">JPG · PNG · PDF (multi-pages)</div>
     </div>
     <div id="thumb" class="thumb hidden">
       <img id="previewImg" alt="aperçu"/>
-      <div><div id="fileName" class="fn"></div><button id="relink" class="relink">Changer de fichier</button></div>
+      <div><div id="fileName" class="fn"></div><div id="pagesInfo" class="pagesinfo"></div>
+      <button id="relink" class="relink">Changer de fichier</button></div>
     </div>
     <input id="fileInput" type="file" accept="image/*,application/pdf" class="hidden"/>
     <div class="diag" id="diag"></div>
@@ -146,13 +160,20 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
       </div>
     </div>
     <div class="langs" id="langs"></div>
-    <p class="note">💡 Les prix et numéros ne sont jamais modifiés. L'arabe est généré en écriture de droite à gauche.</p>
+    <p class="note">Les prix, chiffres et marques ne sont jamais modifiés — vérifiés automatiquement. Arabe généré en écriture droite→gauche.</p>
   </div>
 
   <div class="card">
     <h2><span class="n">3</span> Générer</h2>
-    <p class="sub">Le style de votre document (couleurs, ambiance) est conservé dans chaque langue.</p>
-    <div class="runrow">
+    <p class="sub">Cinq agents travaillent : lecture page par page, vérification de l'extraction, traduction native, reconstruction au format exact, contrôle final.</p>
+    <div class="agents">
+      <span class="ag" id="agP">📑 Paginateur</span>
+      <span class="ag" id="agA">📐 Architecte</span>
+      <span class="ag" id="agV">🔍 Vérificateur</span>
+      <span class="ag" id="agT">🌍 Traducteur</span>
+      <span class="ag" id="agC">🛡️ Contrôle final</span>
+    </div>
+    <div class="runrow" style="margin-top:14px">
       <button id="runBtn" class="btn btn-primary" disabled>Traduire le document</button>
     </div>
     <div class="status" id="statusLine"></div>
@@ -161,117 +182,101 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
 
   <div class="card hidden" id="resultCard">
     <h2><span class="n">✓</span> Résultats</h2>
-    <p class="sub">Basculer entre les langues, puis télécharger chaque version en PDF.</p>
+    <div class="report" id="report"></div>
     <div class="tabs" id="tabs"></div>
-    <div class="preview">
-      <div id="sheet" class="docsheet"></div>
-      <div class="pv-actions">
-        <button class="btn btn-primary" id="pdfBtn">📥 Télécharger en PDF</button>
-        <button class="btn btn-ghost" id="copyBtn">Copier le texte</button>
-      </div>
+    <div class="pagesview" id="pagesview"></div>
+    <div class="pv-actions">
+      <button class="btn btn-primary" id="pdfBtn">📥 Télécharger cette langue en PDF</button>
     </div>
   </div>
 
   <div class="card" id="helpCard">
     <h2>Comment ça marche</h2>
-    <p class="empty-help" style="margin-top:8px">
-      <b>1.</b> Chargez votre menu ou affiche (photo, scan ou PDF). <b>2.</b> Cochez les langues de vos clients — les 20 langues des touristes en Tunisie sont prêtes. <b>3.</b> L'intelligence Scandar lit le document, capte son style (couleurs, ambiance) et le régénère fidèlement dans chaque langue choisie, avec une traduction <b>professionnelle de métier</b> (les noms de plats authentiques restent, les prix ne bougent jamais). <b>4.</b> Téléchargez chaque version en PDF, prête à imprimer ou à relier à vos QR codes Scandar.
-    </p>
+    <p class="empty-help" style="margin-top:8px"><b>1.</b> Chargez votre document (toutes les pages sont lues, jusqu'à 8). <b>2.</b> Cochez les langues de vos clients. <b>3.</b> Cinq agents reconstruisent votre document à l'identique dans chaque langue : mêmes couleurs, même structure, mêmes prix — un vérificateur relit chaque page et un contrôle final garantit qu'aucun prix n'a bougé. <b>4.</b> Téléchargez chaque version en PDF au format d'origine.</p>
   </div>
-
 </div></main>
+
+<div id="printroot"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";}
 
-/* ===== 20 langues touristiques Tunisie (marchés ONTT) ===== */
 const LANGS=[
- {c:"ar",n:"Arabe",fl:"🇹🇳",rtl:true},
- {c:"fr",n:"Français",fl:"🇫🇷"},
- {c:"en",n:"Anglais",fl:"🇬🇧"},
- {c:"de",n:"Allemand",fl:"🇩🇪"},
- {c:"it",n:"Italien",fl:"🇮🇹"},
- {c:"es",n:"Espagnol",fl:"🇪🇸"},
- {c:"pl",n:"Polonais",fl:"🇵🇱"},
- {c:"cs",n:"Tchèque",fl:"🇨🇿"},
- {c:"ru",n:"Russe",fl:"🇷🇺"},
- {c:"uk",n:"Ukrainien",fl:"🇺🇦"},
- {c:"nl",n:"Néerlandais",fl:"🇳🇱"},
- {c:"pt",n:"Portugais",fl:"🇵🇹"},
- {c:"ro",n:"Roumain",fl:"🇷🇴"},
- {c:"hu",n:"Hongrois",fl:"🇭🇺"},
- {c:"sk",n:"Slovaque",fl:"🇸🇰"},
- {c:"sr",n:"Serbe",fl:"🇷🇸"},
- {c:"sv",n:"Suédois",fl:"🇸🇪"},
- {c:"da",n:"Danois",fl:"🇩🇰"},
- {c:"no",n:"Norvégien",fl:"🇳🇴"},
- {c:"tr",n:"Turc",fl:"🇹🇷"}
+ {c:"ar",n:"Arabe",fl:"🇹🇳",rtl:true},{c:"fr",n:"Français",fl:"🇫🇷"},{c:"en",n:"Anglais",fl:"🇬🇧"},
+ {c:"de",n:"Allemand",fl:"🇩🇪"},{c:"it",n:"Italien",fl:"🇮🇹"},{c:"es",n:"Espagnol",fl:"🇪🇸"},
+ {c:"pl",n:"Polonais",fl:"🇵🇱"},{c:"cs",n:"Tchèque",fl:"🇨🇿"},{c:"ru",n:"Russe",fl:"🇷🇺"},
+ {c:"uk",n:"Ukrainien",fl:"🇺🇦"},{c:"nl",n:"Néerlandais",fl:"🇳🇱"},{c:"pt",n:"Portugais",fl:"🇵🇹"},
+ {c:"ro",n:"Roumain",fl:"🇷🇴"},{c:"hu",n:"Hongrois",fl:"🇭🇺"},{c:"sk",n:"Slovaque",fl:"🇸🇰"},
+ {c:"sr",n:"Serbe",fl:"🇷🇸"},{c:"sv",n:"Suédois",fl:"🇸🇪"},{c:"da",n:"Danois",fl:"🇩🇰"},
+ {c:"no",n:"Norvégien",fl:"🇳🇴"},{c:"tr",n:"Turc",fl:"🇹🇷"}
 ];
 const TOP5=["en","de","it","ru","pl"];
 const HAIKU="claude-haiku-4-5-20251001",SONNET="claude-sonnet-4-6";
 const $=s=>document.querySelector(s);
-let imageData=null, extracted=null, results={}, currentLang=null;
+let pagesImgs=[], docFormat=null, docPlan=null, results={}, currentLang=null, prixTotal=0;
 
-/* ===== UI langues ===== */
+/* ===== Langues UI ===== */
 const langsEl=$("#langs");
-LANGS.forEach(l=>{
-  const b=document.createElement("button");b.className="lang";b.dataset.c=l.c;
+LANGS.forEach(l=>{const b=document.createElement("button");b.className="lang";b.dataset.c=l.c;
   b.innerHTML='<span class="fl">'+l.fl+'</span>'+l.n;
-  b.onclick=()=>{b.classList.toggle("on");syncSel();};
-  langsEl.appendChild(b);
-});
+  b.onclick=()=>{b.classList.toggle("on");syncSel();};langsEl.appendChild(b);});
 document.querySelectorAll(".qbtn").forEach(q=>q.onclick=()=>{
   document.querySelectorAll(".lang").forEach(b=>{
     if(q.dataset.q==="all")b.classList.add("on");
     else if(q.dataset.q==="none")b.classList.remove("on");
-    else b.classList.toggle("on",TOP5.includes(b.dataset.c));
-  });syncSel();
-});
+    else b.classList.toggle("on",TOP5.includes(b.dataset.c));});syncSel();});
 function selected(){return [...document.querySelectorAll(".lang.on")].map(b=>LANGS.find(l=>l.c===b.dataset.c));}
-function syncSel(){$("#kpiSel").textContent=selected().length;majBtn();}
-function majBtn(){$("#runBtn").disabled=!(imageData&&selected().length);}
+function syncSel(){$("#kSel").textContent=selected().length;majBtn();}
+function majBtn(){$("#runBtn").disabled=!(pagesImgs.length&&selected().length);}
 
-/* ===== Fichier (image ou PDF) ===== */
+/* ===== AGENT 1 : Paginateur ===== */
 const drop=$("#drop"),fileInput=$("#fileInput");
 drop.onclick=()=>fileInput.click();
 drop.onkeydown=e=>{if(e.key==="Enter"||e.key===" ")fileInput.click();};
 $("#relink").onclick=()=>fileInput.click();
 fileInput.onchange=async e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
-  $("#fileName").textContent=f.name+" (préparation…)";
+  hideErr();setAg("agP","run");
+  $("#fileName").textContent=f.name+" (lecture des pages…)";
   try{
-    let dataUrl;
+    pagesImgs=[];docPlan=null;results={};$("#kDone").textContent="0";$("#kPrix").textContent="—";
+    $("#resultCard").classList.add("hidden");
     if(f.type==="application/pdf"||/\.pdf$/i.test(f.name)){
-      if(!window.pdfjsLib)throw new Error("Lecture PDF indisponible — utilise une photo/capture du document.");
-      dataUrl=await pdfToImage(f);
+      if(!window.pdfjsLib)throw new Error("Lecture PDF indisponible sur cet appareil — utilise des photos des pages.");
+      const buf=await f.arrayBuffer();
+      const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+      const n=Math.min(pdf.numPages,8);
+      for(let i=1;i<=n;i++){
+        $("#fileName").textContent=f.name+" — page "+i+"/"+n+"…";
+        const page=await pdf.getPage(i);
+        const vp1=page.getViewport({scale:1});
+        if(i===1)docFormat={w:vp1.width,h:vp1.height};
+        const sc=Math.min(2,1500/Math.max(vp1.width,vp1.height));
+        const vp=page.getViewport({scale:sc});
+        const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;
+        await page.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
+        pagesImgs.push(c.toDataURL("image/jpeg",0.85).split(",")[1]);
+      }
+      if(pdf.numPages>8)$("#pagesInfo").textContent="⚠️ "+pdf.numPages+" pages — les 8 premières sont traitées.";
+      else $("#pagesInfo").textContent="✓ "+n+" page(s) lue(s), format conservé.";
+      $("#previewImg").src="data:image/jpeg;base64,"+pagesImgs[0];
     } else {
-      dataUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result));r.onerror=rej;r.readAsDataURL(f);});
+      const dataUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result));r.onerror=rej;r.readAsDataURL(f);});
+      const img=new Image();await new Promise(res=>{img.onload=res;img.src=dataUrl;});
+      docFormat={w:img.width,h:img.height};
+      const sc=Math.min(1,1500/Math.max(img.width,img.height));
+      const c=document.createElement("canvas");c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      pagesImgs.push(c.toDataURL("image/jpeg",0.85).split(",")[1]);
+      $("#previewImg").src=dataUrl;$("#pagesInfo").textContent="✓ 1 page lue.";
     }
-    $("#previewImg").src=dataUrl;
-    imageData=await downscale(dataUrl,1600);
     $("#fileName").textContent=f.name;
+    $("#kPages").textContent=pagesImgs.length;
     drop.classList.add("hidden");$("#thumb").classList.remove("hidden");
-    extracted=null;results={};$("#kpiDone").textContent="0";$("#resultCard").classList.add("hidden");
-    majBtn();
-  }catch(err){showErr(err.message||"Fichier illisible.");}
+    setAg("agP","ok");majBtn();
+  }catch(err){setAg("agP","");showErr(err.message||"Fichier illisible.");}
 };
-async function pdfToImage(file){
-  const buf=await file.arrayBuffer();
-  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
-  const page=await pdf.getPage(1);
-  const vp=page.getViewport({scale:2});
-  const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;
-  await page.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
-  return c.toDataURL("image/jpeg",0.9);
-}
-function downscale(dataUrl,maxDim){return new Promise(res=>{
-  const img=new Image();
-  img.onload=()=>{const sc=Math.min(1,maxDim/Math.max(img.width,img.height));
-    const c=document.createElement("canvas");c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
-    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-    res(c.toDataURL("image/jpeg",0.82).split(",")[1]);};
-  img.onerror=()=>res(dataUrl.split(",")[1]);img.src=dataUrl;});}
 
 /* ===== API ===== */
 function fetchTimeout(url,opts,ms){const ctrl=new AbortController();const id=setTimeout(()=>ctrl.abort(),ms);
@@ -280,10 +285,10 @@ async function callClaude(model,content,maxTokens){
   let r;
   try{r=await fetchTimeout("/.netlify/functions/translate",{method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({model,max_tokens:maxTokens||2000,messages:[{role:"user",content}]})},30000);
-  }catch(e){if(e.name==="AbortError")throw new Error("Temps limite dépassé — réessaie avec une image plus nette/légère.");
+  }catch(e){if(e.name==="AbortError")throw new Error("Temps limite dépassé sur une étape — relance, ça reprendra.");
     throw new Error("Impossible de joindre la fonction (réseau).");}
   const raw=await r.text();let data;
-  try{data=JSON.parse(raw);}catch(e){throw new Error("Réponse invalide (HTTP "+r.status+"). Vérifie l'onglet Functions sur Netlify.");}
+  try{data=JSON.parse(raw);}catch(e){throw new Error("Réponse invalide (HTTP "+r.status+").");}
   if(!r.ok||data.error)throw new Error((data.error&&data.error.message)||("Erreur serveur HTTP "+r.status));
   return (data.content||[]).map(c=>c.type==="text"?c.text:"").join("");
 }
@@ -291,137 +296,206 @@ function parseJSON(t){const c=String(t).replace(/```json/gi,"").replace(/```/g,"
   const a=c.indexOf("{"),b=c.lastIndexOf("}");return JSON.parse(a>=0&&b>=0?c.slice(a,b+1):c);}
 
 $("#testBtn").onclick=async()=>{
-  const d=$("#diag");d.className="diag";d.style.display="none";
-  $("#testBtn").textContent="Test…";
+  const d=$("#diag");d.className="diag";d.style.display="none";$("#testBtn").textContent="Test…";
   try{const out=await callClaude(HAIKU,[{type:"text",text:"Réponds uniquement: OK"}],20);
     d.className="diag ok";d.textContent="✅ Connexion OK — "+out.trim();
   }catch(e){d.className="diag ko";d.textContent="❌ "+e.message;}
   finally{$("#testBtn").textContent="Tester la connexion";}
 };
 
+/* ===== Prompt du langage de blocs ===== */
+const BLOCS_SPEC='SCHÉMA DE PAGE (JSON strict) : {"type":"couverture|intercalaire|contenu|decorative","fond":"#hex du fond pleine page","carte":{"fond":"#hex"} ou null si le contenu est posé directement sur le fond,"couleur_texte":"#hex dominant du texte","couleur_titres":"#hex des titres","blocs":[...]}. TYPES DE BLOCS : {"b":"titre","t":"texte","taille":"xl|l|m","align":"center|left|right","couleur":"#hex ou null"} · {"b":"vertical","t":"MOT affiché lettre par lettre à la verticale","couleur":"#hex"} · {"b":"logo","t":"NOM","sous":"sous-texte ou null","couleur":"#hex"} · {"b":"section","t":"titre de section","filet":true|false,"cols":["4CL","1/2L","1L"] ou null si un seul prix,"items":[{"n":"nom","d":"description ou null","p":["prix1","prix2"] (chaque prix TEL QUEL, cases vides = \\"\\") }]} · {"b":"para","t":"paragraphe","align":"center|left","taille":"m|l"} · {"b":"bandeau","t":"texte encadré","fond":"#hex","couleur":"#hex"} · {"b":"espace","taille":"s|m|l"}. RÈGLES : (1) prix recopiés EXACTEMENT chiffre par chiffre ; (2) n\'invente JAMAIS de titre ni de texte ; (3) respecte l\'ordre visuel de haut en bas ; (4) mots mis en évidence entourés de **doubles astérisques** ; (5) noms propres/marques tels quels ; (6) texte illisible = "[illisible]".';
+
 /* ===== Pipeline ===== */
 $("#runBtn").onclick=run;
 async function run(){
-  const langs=selected();if(!imageData||!langs.length)return;
-  hideErr();results={};$("#kpiDone").textContent="0";
-  $("#runBtn").disabled=true;$("#runBtn").textContent="Génération en cours…";
+  const langs=selected();if(!pagesImgs.length||!langs.length)return;
+  hideErr();results={};$("#kDone").textContent="0";
+  $("#runBtn").disabled=true;$("#runBtn").textContent="Génération…";
   $("#prog").classList.add("show");
-  const total=langs.length+1;let done=0;
-  const tick=(label)=>{done++;$("#progFill").style.width=Math.round(done/total*100)+"%";$("#progLabel").textContent=label;};
+  const totalSteps=(docPlan?0:pagesImgs.length*1.5)+langs.length+0.5;let step=0;
+  const tick=(label)=>{step++;$("#progFill").style.width=Math.min(100,Math.round(step/totalSteps*100))+"%";$("#progLabel").textContent=label;};
   try{
-    // Étape 1 : lecture + style (une seule fois)
-    if(!extracted){
-      setStatus("Lecture du document et analyse du style…");
-      $("#progLabel").textContent="Analyse du document…";
-      extracted=parseJSON(await callClaude(HAIKU,[
-        {type:"image",source:{type:"base64",media_type:"image/jpeg",data:imageData}},
-        {type:"text",text:"Tu analyses un document commercial (menu de restaurant, affiche, flyer, carte de soins, tarifs…). Extrais TOUT le contenu et le STYLE VISUEL. Réponds UNIQUEMENT en JSON sans markdown : {\"type_document\":\"menu|affiche|flyer|tarifs|autre\",\"langue_source\":\"...\",\"style\":{\"couleur_primaire\":\"#hex (couleur dominante des titres)\",\"couleur_accent\":\"#hex (2e couleur forte du document : mots en évidence, éléments décoratifs — si absente, reprends la primaire)\",\"couleur_fond\":\"#hex (fond du document)\",\"couleur_texte\":\"#hex\",\"ambiance\":\"élégant|chaleureux|moderne|traditionnel|festif\"},\"titre\":\"...\",\"sous_titre\":\"...ou null\",\"blocs\":[{\"type\":\"section\",\"titre\":\"...\",\"items\":[{\"nom\":\"...\",\"description\":\"...ou null\",\"prix\":\"...tel quel avec devise, ou null\"}]},{\"type\":\"texte\",\"contenu\":\"paragraphe tel qu'écrit\"},{\"type\":\"bandeau\",\"contenu\":\"passage mis en évidence dans un encadré/fond coloré\"}],\"pied\":\"...ou null\"}. RÈGLES : (1) recopie les prix EXACTEMENT (chiffres+devise) ; (2) N'INVENTE JAMAIS de titres — si un passage n'a pas de titre dans le document, utilise un bloc 'texte' ou 'bandeau' sans titre ; utilise 'section'+items UNIQUEMENT pour de vraies listes type menu/tarifs ; (3) pour une affiche/flyer : respecte l'ordre et le découpage des paragraphes tels quels ; un passage dans un encadré coloré = bloc 'bandeau' ; (4) entoure les mots visuellement mis en évidence (gras/couleur) de **doubles astérisques** dans le contenu ; (5) les noms propres (hôtel, marque, enseigne) restent EXACTEMENT tels quels ; (6) n'invente rien ; texte illisible = \\\"[illisible]\\\"."}
-      ],2500));
-      tick("Document analysé ✓");
-    } else { tick("Document déjà analysé ✓"); }
+    /* AGENT 2+3 : Architecte + Vérificateur (une seule fois par document) */
+    if(!docPlan){
+      docPlan=[];
+      setAg("agA","run");
+      for(let i=0;i<pagesImgs.length;i++){
+        setStatus("Architecte — page "+(i+1)+"/"+pagesImgs.length+"…");
+        const pg=parseJSON(await callClaude(HAIKU,[
+          {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pagesImgs[i]}},
+          {type:"text",text:"Tu es l'Architecte de reconstruction documentaire. Décris cette page EXACTEMENT telle qu'elle est, avec le schéma fourni. "+BLOCS_SPEC+" Réponds UNIQUEMENT avec le JSON de la page, sans markdown."}
+        ],2800));
+        docPlan.push(pg);tick("Page "+(i+1)+" lue ✓");
+      }
+      setAg("agA","ok");setAg("agV","run");
+      /* Vérificateur : uniquement les pages avec du contenu dense */
+      for(let i=0;i<docPlan.length;i++){
+        const pg=docPlan[i];
+        const dense=(pg.blocs||[]).some(b=>b.b==="section");
+        if(!dense){tick("Page "+(i+1)+" — rien à vérifier");continue;}
+        setStatus("Vérificateur — page "+(i+1)+"…");
+        try{
+          const fix=parseJSON(await callClaude(HAIKU,[
+            {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pagesImgs[i]}},
+            {type:"text",text:"Tu es le Vérificateur. Voici l'image d'une page et l'extraction JSON qui en a été faite. Compare LIGNE PAR LIGNE : éléments manquants, prix inexacts, textes erronés. Corrige le JSON et renvoie la version corrigée COMPLÈTE (même schéma), UNIQUEMENT le JSON. Si tout est correct, renvoie le même JSON. EXTRACTION : "+JSON.stringify(pg)}
+          ],2800));
+          if(fix&&fix.blocs)docPlan[i]=fix;
+        }catch(e){/* la version de l'architecte reste */}
+        tick("Page "+(i+1)+" vérifiée ✓");
+      }
+      setAg("agV","ok");
+      prixTotal=comptePrix(docPlan);
+    }
 
     montreOnglets(langs);
-
-    // Étape 2 : traduction par langue (séquentiel)
-    for(let i=0;i<langs.length;i++){
-      const L=langs[i];
-      setStatus("Traduction "+(i+1)+"/"+langs.length+" : "+L.n+"…");
+    setAg("agT","run");
+    /* AGENT 4 : Traducteur (par langue, tout le document en 1 appel) */
+    const paquet=docPlan.map((pg,i)=>({page:i+1,blocs:extraitTextes(pg)}));
+    for(let k=0;k<langs.length;k++){
+      const L=langs[k];
+      setStatus("Traducteur — "+L.n+" ("+(k+1)+"/"+langs.length+")…");
       setTab(L.c,"load");
-      $("#progLabel").textContent="Traduction en "+L.n+"…";
       try{
         const tr=parseJSON(await callClaude(SONNET,[
-          {type:"text",text:"Tu es traducteur professionnel spécialisé en hôtellerie-restauration et supports commerciaux. Traduis ce contenu en "+L.n+" ("+L.c+"). RÈGLES STRICTES : (1) Les PRIX, chiffres, numéros de téléphone et devises restent EXACTEMENT identiques, jamais convertis. (2) Les noms propres de plats/produits authentiques restent dans leur langue (Couscous, Ojja, Brik, Harissa, Mechouia…) — traduis seulement leur description. (3) Le NOM DE L'ENSEIGNE (hôtel, restaurant, marque — ex. dans le titre) reste EXACTEMENT tel quel, jamais traduit ni translittéré. (4) Traduction de MÉTIER, naturelle, comme écrite par un natif — jamais littérale. (5) Conserve les **doubles astérisques** autour des mêmes mots mis en évidence dans la traduction. (6) Ne rien omettre, ne rien ajouter. (7) Garde la même structure JSON (mêmes types de blocs). CONTENU : "+JSON.stringify({titre:extracted.titre,sous_titre:extracted.sous_titre,blocs:extracted.blocs,pied:extracted.pied})+" Réponds UNIQUEMENT avec le même JSON traduit, sans markdown."}
-        ],3000));
-        results[L.c]=tr;setTab(L.c,"done");
-        $("#kpiDone").textContent=Object.keys(results).length;
+          {type:"text",text:"Tu es traducteur professionnel natif (hôtellerie, restauration, supports commerciaux). Traduis en "+L.n+" ("+L.c+") UNIQUEMENT les valeurs textuelles de ce document. RÈGLES ABSOLUES : (1) PRIX, chiffres, téléphones : identiques au caractère près, jamais convertis. (2) MARQUES et noms propres (enseignes, alcools, vins, personnages) : jamais traduits ni translittérés. (3) Plats/mots internationaux (Pasta, Pizza, Tapas, noms de plats italiens ou tunisiens comme Frutti di Mare, Couscous, Ojja) : gardés tels quels ; seules leurs descriptions se traduisent. (4) Traduction de métier, naturelle, comme écrite par un natif. (5) Conserve les **astérisques** autour des mêmes mots. (6) Rien omis, rien ajouté, même structure exactement. DOCUMENT : "+JSON.stringify(paquet)+" Réponds UNIQUEMENT avec le même JSON traduit."}
+        ],4000));
+        /* AGENT 5 : Contrôle final par code — prix intacts */
+        const verdict=controleFinal(paquet,tr);
+        results[L.c]={tr:tr,verdict:verdict};
+        setTab(L.c,"done");
+        $("#kDone").textContent=Object.keys(results).length;
         if(!currentLang){currentLang=L.c;affiche(L.c);}
-      }catch(e){ setTab(L.c,"err"); console.error(L.c,e); }
+      }catch(e){setTab(L.c,"err");console.error(L.c,e);}
       tick(L.n+" ✓");
     }
+    setAg("agT","ok");setAg("agC","ok");
     const ok=Object.keys(results).length;
-    setStatus(ok===langs.length?("✓ "+ok+" langue(s) générée(s)."):("⚠️ "+ok+"/"+langs.length+" réussies — relance pour compléter."));
+    majRapport();
+    setStatus(ok===langs.length?("✓ "+ok+" version(s) générée(s)."):("⚠️ "+ok+"/"+langs.length+" réussies — relance pour compléter."));
     if(ok&&!currentLang){currentLang=Object.keys(results)[0];affiche(currentLang);}
   }catch(err){showErr(err.message);setStatus("");}
   finally{$("#runBtn").disabled=false;$("#runBtn").textContent="Traduire le document";}
 }
+
+function extraitTextes(pg){
+  /* on n'envoie à la traduction que ce qui est textuel, structure conservée */
+  return (pg.blocs||[]).map(b=>{
+    if(b.b==="section")return{b:"section",t:b.t,cols:b.cols||null,items:(b.items||[]).map(it=>({n:it.n,d:it.d||null,p:it.p}))};
+    if(b.b==="espace")return{b:"espace",taille:b.taille};
+    const o={b:b.b,t:b.t};if(b.sous)o.sous=b.sous;if(b.align)o.align=b.align;if(b.taille)o.taille=b.taille;return o;
+  });
+}
+function comptePrix(plan){let n=0;plan.forEach(pg=>(pg.blocs||[]).forEach(b=>{if(b.b==="section")(b.items||[]).forEach(it=>(it.p||[]).forEach(p=>{if(String(p).trim())n++;}));}));return n;}
+function tousPrix(paquet){const arr=[];paquet.forEach(pg=>(pg.blocs||[]).forEach(b=>{if(b.b==="section")(b.items||[]).forEach(it=>(it.p||[]).forEach(p=>arr.push(String(p).trim())));}));return arr;}
+function controleFinal(orig,trad){
+  const a=tousPrix(orig),b=tousPrix(trad.map?trad:[]);
+  const t=Array.isArray(trad)?trad:(trad.pages||trad);
+  const bb=tousPrix(Array.isArray(t)?t:[]);
+  const prixOk=a.length===bb.length&&a.every((p,i)=>p===bb[i]);
+  return{prixOk:prixOk,nbPrix:a.length,structOk:Array.isArray(t)&&t.length===orig.length};
+}
+function majRapport(){
+  const langsOk=Object.keys(results);if(!langsOk.length)return;
+  const tousOk=langsOk.every(c=>results[c].verdict.prixOk&&results[c].verdict.structOk);
+  const r=$("#report");
+  r.className="report show"+(tousOk?"":" warn");
+  r.textContent=(tousOk?"✓ Contrôle final : ":"⚠️ Contrôle : ")+pagesImgs.length+" page(s) · "+langsOk.length+" langue(s) · "+prixTotal+" prix vérifiés — "+(tousOk?"aucun prix modifié, structure conforme.":"vérifie les versions signalées avant diffusion.");
+  $("#kPrix").textContent=prixTotal+" ✓";
+}
+
+/* ===== Rendu / reconstruction ===== */
+function montreOnglets(langs){
+  $("#resultCard").classList.remove("hidden");
+  const tabs=$("#tabs");tabs.innerHTML="";
+  langs.forEach(L=>{const t=document.createElement("button");t.className="tab";t.dataset.c=L.c;
+    t.innerHTML='<span class="st"></span>'+L.fl+" "+L.n;
+    t.onclick=()=>{if(results[L.c]){currentLang=L.c;affiche(L.c);
+      document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.dataset.c===L.c));}};
+    tabs.appendChild(t);});
+}
+function setTab(c,s){const t=document.querySelector('.tab[data-c="'+c+'"]');if(!t)return;
+  t.classList.remove("load","done");if(s==="load")t.classList.add("load");
+  if(s==="done")t.classList.add("done");if(s==="err")t.style.opacity=".45";}
+function setAg(id,s){const el=$("#"+id);el.className="ag"+(s?(" "+s):"");}
 function setStatus(t){$("#statusLine").textContent=t;}
 function showErr(m){const e=$("#errBox");e.textContent="⚠️ "+m;e.classList.add("show");}
 function hideErr(){$("#errBox").classList.remove("show");}
 
-/* ===== Onglets + rendu ===== */
-function montreOnglets(langs){
-  $("#resultCard").classList.remove("hidden");
-  const tabs=$("#tabs");tabs.innerHTML="";
-  langs.forEach(L=>{
-    const t=document.createElement("button");t.className="tab";t.dataset.c=L.c;
-    t.innerHTML='<span class="st"></span>'+L.fl+" "+L.n;
-    t.onclick=()=>{if(results[L.c]){currentLang=L.c;affiche(L.c);
-      document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.dataset.c===L.c));}};
-    tabs.appendChild(t);
-  });
-}
-function setTab(c,state){const t=document.querySelector('.tab[data-c="'+c+'"]');if(!t)return;
-  t.classList.remove("load","done");if(state==="load")t.classList.add("load");
-  if(state==="done")t.classList.add("done");
-  if(state==="err")t.style.opacity=".45";}
-function affiche(c){
-  const L=LANGS.find(x=>x.c===c),tr=results[c];if(!tr)return;
-  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.dataset.c===c));
-  const st=extracted.style||{};
-  const prim=st.couleur_primaire||"#1D3A5F", accent=st.couleur_accent||prim,
-        fond=st.couleur_fond||"#FFFDF8", txt=st.couleur_texte||"#222";
-  const isAffiche=["affiche","flyer","autre"].includes(extracted.type_document);
-  const sheet=$("#sheet");
-  sheet.className="docsheet"+(L.rtl?" rtl":"")+(isAffiche?" affiche":"");
-  sheet.style.background=fond;sheet.style.color=txt;
-  const hl=(s)=>esc(s).replace(/\*\*(.+?)\*\*/g,'<span class="hl" style="color:'+accent+'">$1</span>');
-  let h='<div class="doc-title" style="color:'+prim+'">'+hl(tr.titre||extracted.titre||"")+'</div>';
-  if(tr.sous_titre)h+='<div class="doc-sub">'+hl(tr.sous_titre)+'</div>';
-  h+='<div class="doc-sep" style="background:'+accent+'"></div>';
-  (tr.blocs||[]).forEach(b=>{
-    if(b.type==="section"&&b.items&&b.items.length){
-      h+='<div class="sec">'+(b.titre?'<div class="sec-t" style="color:'+prim+';border-color:'+prim+'33">'+hl(b.titre)+'</div>':'');
+function rendPage(pg,blocsTraduits,rtl){
+  const fond=pg.fond||"#fff", cTexte=pg.couleur_texte||"#222", cTitres=pg.couleur_titres||cTexte;
+  const ratio=docFormat?(docFormat.h/docFormat.w):1.414;
+  const d=document.createElement("div");
+  d.className="rp"+(rtl?" rtl":"");
+  d.style.background=fond;d.style.color=cTexte;d.style.aspectRatio=(1/ratio);
+  d.style.fontSize="1em";
+  const inner=document.createElement("div");inner.className="inner";
+  let zone=inner;
+  if(pg.carte){const cz=document.createElement("div");cz.className="cardzone";cz.style.background=pg.carte.fond||"#fff";inner.appendChild(cz);zone=cz;}
+  const centre=["couverture","intercalaire","decorative"].includes(pg.type);
+  if(centre)zone.classList.add("center");
+  const hl=(s,acc)=>esc(s).replace(/\*\*(.+?)\*\*/g,'<span class="b-hl"'+(acc?' style="color:'+acc+'"':'')+'>$1</span>');
+  (blocsTraduits||[]).forEach(b=>{
+    let el=null;
+    if(b.b==="titre"){el=document.createElement("div");el.className="b-titre "+(b.taille||"l");
+      el.style.color=b.couleur||cTitres;if(b.align)el.style.textAlign=b.align;el.innerHTML=hl(b.t);}
+    else if(b.b==="vertical"){el=document.createElement("div");el.className="b-vert";el.style.color=b.couleur||cTitres;
+      const chars=rtl?[String(b.t||"")]:String(b.t||"").split("");
+      el.innerHTML=chars.map(ch=>"<span>"+esc(ch)+"</span>").join("");}
+    else if(b.b==="logo"){el=document.createElement("div");el.className="b-logo";el.style.color=b.couleur||cTitres;
+      el.innerHTML=esc(b.t||"")+(b.sous?"<small>"+esc(b.sous)+"</small>":"");}
+    else if(b.b==="section"){el=document.createElement("div");el.className="b-sec";
+      let h='<div class="st" style="color:'+cTitres+';border-color:'+cTitres+'55">'+hl(b.t||"")+'</div>';
+      if(b.cols&&b.cols.length)h+='<div class="cols">'+b.cols.map(c=>"<span>"+esc(c)+"</span>").join("")+'</div>';
       (b.items||[]).forEach(it=>{
-        h+='<div class="item"><div class="in"><div class="nm">'+hl(it.nom||"")+'</div>'+(it.description?'<div class="ds">'+hl(it.description)+'</div>':'')+'</div>'
-          +(it.prix?'<div class="dots"></div><div class="pr" style="color:'+accent+'">'+esc(it.prix)+'</div>':'')+'</div>';
+        const prs=(it.p||[]).filter(p=>String(p).trim()!=="");
+        h+='<div class="it"><div><div class="nm">'+hl(it.n||"")+'</div>'+(it.d?'<div class="ds">'+hl(it.d)+'</div>':'')+'</div>'
+          +(prs.length?'<div class="prs">'+ (it.p||[]).map(p=>"<span>"+esc(p)+"</span>").join("") +'</div>':'')+'</div>';
       });
-      h+='</div>';
-    } else if(b.type==="bandeau"&&b.contenu){
-      h+='<div class="highlight-band" style="background:'+prim+';color:#fff">'+hl(b.contenu).replace(/style="color:[^"]*"/g,'style="color:'+accent+'"')+'</div>';
-    } else if(b.contenu){
-      h+='<div class="freeblock">'+hl(b.contenu)+'</div>';
-    }
+      el.innerHTML=h;}
+    else if(b.b==="para"){el=document.createElement("div");el.className="b-para";
+      if(b.align)el.style.textAlign=b.align;if(b.taille==="l")el.style.fontSize="1.05em";el.innerHTML=hl(b.t);}
+    else if(b.b==="bandeau"){el=document.createElement("div");el.className="b-band";
+      el.style.background=b.fond||cTitres;el.style.color=b.couleur||"#fff";el.innerHTML=hl(b.t,"#F5C26B");}
+    else if(b.b==="espace"){el=document.createElement("div");el.className="b-esp "+(b.taille||"m");}
+    if(el)zone.appendChild(el);
   });
-  if(tr.pied)h+='<div class="doc-foot">'+hl(tr.pied)+'</div>';
-  sheet.innerHTML=h;
+  d.appendChild(inner);
+  return d;
 }
-function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function affiche(c){
+  const L=LANGS.find(x=>x.c===c),R=results[c];if(!R)return;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.dataset.c===c));
+  const trPages=Array.isArray(R.tr)?R.tr:(R.tr.pages||[]);
+  const view=$("#pagesview");view.innerHTML="";
+  docPlan.forEach((pg,i)=>{
+    const tp=trPages.find(p=>p.page===i+1)||trPages[i]||{};
+    const wrap=document.createElement("div");wrap.className="sheetpage";
+    const page=rendPage(pg,tp.blocs||extraitTextes(pg),!!L.rtl);
+    page.style.fontSize="13px";
+    wrap.appendChild(page);view.appendChild(wrap);
+  });
+}
 
-/* ===== Export ===== */
+/* ===== Export PDF multi-pages ===== */
 $("#pdfBtn").onclick=()=>{
   if(!currentLang||!results[currentLang])return;
-  const L=LANGS.find(x=>x.c===currentLang);
-  const sheet=$("#sheet");
-  const w=window.open("","_blank");
-  w.document.write('<html dir="'+(L.rtl?"rtl":"ltr")+'"><head><meta charset="utf-8"><title>'+esc(extracted.titre||"document")+' — '+L.n+'</title><style>'+
-    "@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');"+
-    'body{margin:0;font-family:Inter,sans-serif}'+document.querySelector("style").textContent+
-    '</style></head><body><div class="docsheet'+(L.rtl?" rtl":"")+'" style="background:'+sheet.style.background+';color:'+sheet.style.color+';min-height:100vh">'+sheet.innerHTML+'</div><script>setTimeout(function(){window.print()},600)<\/script></body></html>');
-  w.document.close();
-};
-$("#copyBtn").onclick=()=>{
-  if(!currentLang||!results[currentLang])return;
-  const tr=results[currentLang];let out=((tr.titre||"")+"\n"+(tr.sous_titre||"")+"\n\n").replace(/\*\*/g,"");
-  (tr.blocs||[]).forEach(b=>{
-    if(b.type==="section"&&b.items){out+=(b.titre?("== "+b.titre+" ==\n"):"");
-      (b.items||[]).forEach(it=>{out+=(it.nom||"")+(it.prix?" — "+it.prix:"")+"\n"+(it.description?("   "+it.description+"\n"):"");});out+="\n";}
-    else if(b.contenu)out+=b.contenu+"\n\n";
+  const L=LANGS.find(x=>x.c===currentLang),R=results[currentLang];
+  const trPages=Array.isArray(R.tr)?R.tr:(R.tr.pages||[]);
+  const root=$("#printroot");root.innerHTML="";
+  const wmm=docFormat?Math.round(docFormat.w*0.3528):210, hmm=docFormat?Math.round(docFormat.h*0.3528):297;
+  let st=document.getElementById("printsize");
+  if(!st){st=document.createElement("style");st.id="printsize";document.head.appendChild(st);}
+  st.textContent="@page{size:"+wmm+"mm "+hmm+"mm;margin:0}";
+  docPlan.forEach((pg,i)=>{
+    const tp=trPages.find(p=>p.page===i+1)||trPages[i]||{};
+    const page=rendPage(pg,tp.blocs||extraitTextes(pg),!!L.rtl);
+    page.style.fontSize=(wmm/13)+"px";
+    root.appendChild(page);
   });
-  if(tr.pied)out+=tr.pied;
-  out=out.replace(/\*\*/g,"");
-  navigator.clipboard.writeText(out);
-  $("#copyBtn").textContent="✓ Copié";setTimeout(()=>$("#copyBtn").textContent="Copier le texte",1500);
+  setTimeout(()=>window.print(),400);
 };
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 </script>
 </body>
 </html>
