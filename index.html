@@ -76,10 +76,6 @@ main{padding:18px 0 70px}
 .hidden{display:none}
 .empty-help{font-size:13px;color:var(--soft);line-height:1.7}.empty-help b{color:var(--ink)}
 button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-@page{margin:0}
-@media print{body{background:#fff}body>*{display:none!important}#printroot{display:block!important}
-#printroot img{page-break-after:always;width:100%;height:100vh;object-fit:contain;display:block}}
-#printroot{display:none}
 </style>
 </head>
 <body>
@@ -128,10 +124,10 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
 
   <div class="card">
     <h2><span class="n">3</span> Générer</h2>
-    <p class="sub">Cinq agents : le Scanneur repère chaque écriture, le Gardien préserve le fond (logos, images, décors intacts), le Traducteur traduit, l'Écrivain réécrit à la même place, le Contrôleur vérifie.</p>
+    <p class="sub">L'Arpenteur mesure chaque écriture au pixel près, le Lecteur corrige la lecture, le Traducteur traduit, l'Écrivain efface et réécrit à la place exacte, le Contrôleur vérifie.</p>
     <div class="agents">
-      <span class="ag" id="agS">🔎 Scanneur</span>
-      <span class="ag" id="agG">🖼️ Gardien du fond</span>
+      <span class="ag" id="agA">📏 Arpenteur</span>
+      <span class="ag" id="agL">🧠 Lecteur</span>
       <span class="ag" id="agT">🌍 Traducteur</span>
       <span class="ag" id="agE">✍️ Écrivain</span>
       <span class="ag" id="agC">🛡️ Contrôleur</span>
@@ -149,19 +145,18 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
     <div class="tabs" id="tabs"></div>
     <div class="pagesview" id="pagesview"></div>
     <div class="pv-actions">
-      <button class="btn btn-primary" id="pdfBtn">📥 Télécharger cette langue en image (JPEG)</button>
+      <button class="btn btn-primary" id="dlBtn">📥 Télécharger cette langue en image (JPEG)</button>
     </div>
   </div>
 
   <div class="card">
     <h2>Comment ça marche</h2>
-    <p class="empty-help" style="margin-top:8px"><b>1.</b> Chargez votre document — logos, images et décors resteront exactement tels quels. <b>2.</b> Cochez les langues. <b>3.</b> Le Scanneur localise chaque écriture, le Gardien du fond efface proprement le texte d'origine sans toucher au reste, le Traducteur traduit (prix et marques intacts), l'Écrivain réécrit chaque texte à sa place exacte — même couleur, même alignement — et le Contrôleur vérifie qu'aucun chiffre n'a bougé. <b>4.</b> Téléchargez chaque langue en image JPEG, au format d'origine.</p>
+    <p class="empty-help" style="margin-top:8px"><b>1.</b> Chargez votre document — logos, images et décors resteront exactement tels quels. <b>2.</b> Cochez les langues. <b>3.</b> L'Arpenteur (technologie de scanner) localise chaque écriture au pixel près, le Lecteur corrige la lecture, le Traducteur traduit (prix et marques intacts), l'Écrivain efface proprement et réécrit chaque texte à sa place exacte — couleur et alignement mesurés sur l'original — et le Contrôleur vérifie qu'aucun chiffre n'a bougé. <b>4.</b> Téléchargez chaque langue en image JPEG, au format d'origine.</p>
   </div>
 </div></main>
 
-<div id="printroot"></div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
 if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";}
 
@@ -177,8 +172,7 @@ const LANGS=[
 const TOP5=["en","de","it","ru","pl"];
 const HAIKU="claude-haiku-4-5-20251001",SONNET="claude-sonnet-4-6";
 const $=s=>document.querySelector(s);
-/* pages : [{img:HTMLImageElement pleine résolution, b64:miniature pour IA, W,H}] */
-let pages=[], zonesParPage=null, fonds=null, results={}, currentLang=null, nbZones=0;
+let pages=[], zonesParPage=null, results={}, currentLang=null, nbZones=0;
 
 /* ===== Langues ===== */
 const langsEl=$("#langs");
@@ -194,7 +188,7 @@ function selected(){return [...document.querySelectorAll(".lang.on")].map(b=>LAN
 function syncSel(){$("#kSel").textContent=selected().length;majBtn();}
 function majBtn(){$("#runBtn").disabled=!(pages.length&&selected().length);}
 
-/* ===== Chargement (Paginateur intégré) ===== */
+/* ===== Chargement ===== */
 const drop=$("#drop"),fileInput=$("#fileInput");
 drop.onclick=()=>fileInput.click();
 drop.onkeydown=e=>{if(e.key==="Enter"||e.key===" ")fileInput.click();};
@@ -209,7 +203,7 @@ fileInput.onchange=async e=>{
   hideErr();
   $("#fileName").textContent=f.name+" (lecture…)";
   try{
-    pages=[];zonesParPage=null;fonds=null;results={};currentLang=null;
+    pages=[];zonesParPage=null;results={};currentLang=null;
     $("#kDone").textContent="0";$("#kZones").textContent="—";$("#resultCard").classList.add("hidden");
     if(f.type==="application/pdf"||/\.pdf$/i.test(f.name)){
       if(!window.pdfjsLib)throw new Error("Lecture PDF indisponible — utilise des photos des pages.");
@@ -267,6 +261,85 @@ $("#testBtn").onclick=async()=>{
   finally{$("#testBtn").textContent="Tester la connexion";}
 };
 
+/* ===== AGENT 1 : Arpenteur (OCR pixel) ===== */
+let __worker=null;
+async function getOCR(){
+  if(__worker)return __worker;
+  setStatus("Arpenteur — chargement du moteur (première fois : ~20-40 s)…");
+  __worker=await Tesseract.createWorker(["fra","eng"]);
+  return __worker;
+}
+function lignesDe(data){
+  if(data.lines&&data.lines.length)return data.lines;
+  const ls=[];(data.blocks||[]).forEach(b=>(b.paragraphs||[]).forEach(p=>(p.lines||[]).forEach(l=>ls.push(l))));
+  return ls;
+}
+async function arpenter(page){
+  const w=await getOCR();
+  const res=await w.recognize(page.img,{},{blocks:true,text:true});
+  const brutes=lignesDe(res.data)
+    .filter(l=>l.text&&l.text.trim().length>=2&&(l.confidence==null||l.confidence>=45))
+    .filter(l=>/[A-Za-zÀ-ÿ0-9\u0600-\u06FF]/.test(l.text))
+    .map(l=>({x0:l.bbox.x0,y0:l.bbox.y0,x1:l.bbox.x1,y1:l.bbox.y1,t:l.text.trim()}));
+  return grouper(brutes,page);
+}
+function grouper(lignes,page){
+  lignes.sort((a,b)=>a.y0-b.y0||a.x0-b.x0);
+  const zones=[];
+  lignes.forEach(l=>{
+    const h=l.y1-l.y0;
+    const z=zones.find(z=>{
+      const gap=l.y0-z.y1;
+      const chev=Math.min(z.x1,l.x1)-Math.max(z.x0,l.x0);
+      return gap>-h*0.4&&gap<Math.max(h,z.hMoy)*0.85&&chev>-(z.x1-z.x0)*0.05;
+    });
+    if(z){z.lignes.push(l);z.x0=Math.min(z.x0,l.x0);z.y0=Math.min(z.y0,l.y0);
+      z.x1=Math.max(z.x1,l.x1);z.y1=Math.max(z.y1,l.y1);
+      z.hMoy=z.lignes.reduce((s,q)=>s+(q.y1-q.y0),0)/z.lignes.length;}
+    else zones.push({x0:l.x0,y0:l.y0,x1:l.x1,y1:l.y1,lignes:[l],hMoy:h});
+  });
+  zones.forEach(z=>{
+    z.t=z.lignes.map(l=>l.t).join("\n");
+    /* alignement mesuré */
+    const cs=z.lignes.map(l=>(l.x0+l.x1)/2), gs=z.lignes.map(l=>l.x0);
+    const ec=t=>{const m=t.reduce((s,v)=>s+v,0)/t.length;return Math.sqrt(t.reduce((s,v)=>s+(v-m)*(v-m),0)/t.length);};
+    if(z.lignes.length>1)z.align=ec(cs)<=ec(gs)*0.7?"center":"left";
+    else{const cPage=page.W/2,cZone=(z.x0+z.x1)/2;z.align=Math.abs(cZone-cPage)<page.W*0.06?"center":"left";}
+    /* interligne */
+    z.pitch=z.lignes.length>1?(z.lignes[z.lignes.length-1].y0-z.lignes[0].y0)/(z.lignes.length-1):(z.y1-z.y0)*1.15;
+  });
+  return zones;
+}
+
+/* ===== Couleurs mesurées sur l'original ===== */
+function mesureCouleurs(page,zones){
+  const c=document.createElement("canvas");c.width=page.W;c.height=page.H;
+  const ctx=c.getContext("2d");ctx.drawImage(page.img,0,0);
+  const data=ctx.getImageData(0,0,c.width,c.height);
+  const px=(x,y)=>{x=Math.max(0,Math.min(c.width-1,x|0));y=Math.max(0,Math.min(c.height-1,y|0));
+    const i=(y*c.width+x)*4;return[data.data[i],data.data[i+1],data.data[i+2]];};
+  zones.forEach(z=>{
+    /* fond : médiane du pourtour */
+    const pts=[];const stepX=Math.max(2,((z.x1-z.x0)/40)|0);
+    for(let x=z.x0;x<=z.x1;x+=stepX){pts.push(px(x,z.y0-4));pts.push(px(x,z.y1+4));}
+    const stepY=Math.max(2,((z.y1-z.y0)/24)|0);
+    for(let y=z.y0;y<=z.y1;y+=stepY){pts.push(px(z.x0-4,y));pts.push(px(z.x1+4,y));}
+    const med=(arr,k)=>{const a=arr.map(p=>p[k]).sort((u,v)=>u-v);return a[(a.length/2)|0]||255;};
+    z.fond=[med(pts,0),med(pts,1),med(pts,2)];
+    /* encre : pixels intérieurs les plus éloignés du fond */
+    const encre=[];
+    for(let y=z.y0;y<=z.y1;y+=Math.max(1,stepY/2|0))for(let x=z.x0;x<=z.x1;x+=Math.max(1,stepX/2|0)){
+      const p=px(x,y);
+      const d=Math.abs(p[0]-z.fond[0])+Math.abs(p[1]-z.fond[1])+Math.abs(p[2]-z.fond[2]);
+      if(d>110)encre.push(p);
+    }
+    z.encre=encre.length?[med(encre,0),med(encre,1),med(encre,2)]:[34,34,34];
+    /* graisse estimée : densité d'encre */
+    const surface=((z.x1-z.x0)*(z.y1-z.y0))/(Math.max(1,stepX/2|0)*Math.max(1,stepY/2|0));
+    z.gras=encre.length/Math.max(1,surface)>0.30;
+  });
+}
+
 /* ===== Pipeline ===== */
 $("#runBtn").onclick=run;
 async function run(){
@@ -274,39 +347,47 @@ async function run(){
   hideErr();results={};$("#kDone").textContent="0";
   $("#runBtn").disabled=true;$("#runBtn").textContent="Génération…";
   $("#prog").classList.add("show");
-  const total=(zonesParPage?0:pages.length)+langs.length*pages.length*0.5+1;let step=0;
+  const total=(zonesParPage?0:pages.length*2)+langs.length*pages.length*0.6+1;let step=0;
   const tick=l=>{step++;$("#progFill").style.width=Math.min(100,Math.round(step/total*100))+"%";$("#progLabel").textContent=l;};
   try{
-    /* AGENT 1 : Scanneur (une fois par document) */
     if(!zonesParPage){
-      zonesParPage=[];setAg("agS","run");
+      /* AGENT 1 : Arpenteur */
+      zonesParPage=[];setAg("agA","run");
       for(let i=0;i<pages.length;i++){
-        setStatus("Scanneur — page "+(i+1)+"/"+pages.length+"…");
-        const out=parseJSON(await callClaude(SONNET,[
-          {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pages[i].b64}},
-          {type:"text",text:"Tu es le Scanneur d'écritures. Repère TOUTES les zones de TEXTE de cette image (ignore logos dessinés, icônes, illustrations, motifs). Pour chaque zone (un paragraphe ou une ligne autonome = une zone), donne sa boîte en POURCENTAGE de l'image (origine en haut-gauche) et ses attributs. Réponds UNIQUEMENT en JSON : {\"zones\":[{\"x\":numéro,\"y\":numéro,\"w\":numéro,\"h\":numéro,\"t\":\"texte EXACT recopié caractère par caractère, avec \\n entre les lignes du même paragraphe\",\"c\":\"#couleur du texte\",\"f\":\"#couleur du fond immédiatement derrière le texte\",\"align\":\"left|center|right\",\"poids\":\"bold|normal\",\"famille\":\"serif|sans|script\"}]}. RÈGLES : (1) x,y,w,h précis avec 1 décimale, la boîte englobe TOUT le texte de la zone sans mordre sur les graphiques voisins ; (2) recopie les textes EXACTEMENT (chiffres, accents, majuscules) ; (3) un texte sur plusieurs lignes = UNE zone avec \\n ; (4) n'invente rien ; (5) si des mots du même paragraphe ont une autre couleur, entoure-les de **astérisques**."}
-        ],3000));
-        zonesParPage.push((out.zones||[]).filter(z=>z.t&&String(z.t).trim()));
-        tick("Page "+(i+1)+" scannée ✓");
+        setStatus("Arpenteur — page "+(i+1)+"/"+pages.length+" (mesure au pixel)…");
+        const zs=await arpenter(pages[i]);
+        mesureCouleurs(pages[i],zs);
+        zonesParPage.push(zs);
+        tick("Page "+(i+1)+" arpentée ✓");
       }
       nbZones=zonesParPage.reduce((s,z)=>s+z.length,0);
       $("#kZones").textContent=nbZones;
-      setAg("agS","ok");
-      /* AGENT 2 : Gardien du fond (client, sans IA) */
-      setAg("agG","run");setStatus("Gardien du fond — effacement propre des textes…");
-      fonds=pages.map((p,i)=>gommer(p,zonesParPage[i]));
-      setAg("agG","ok");
+      setAg("agA","ok");
+      /* AGENT 2 : Lecteur (corrige la lecture OCR d'après l'image) */
+      setAg("agL","run");
+      for(let i=0;i<pages.length;i++){
+        const zs=zonesParPage[i];if(!zs.length){tick("Page "+(i+1)+" — vide");continue;}
+        setStatus("Lecteur — page "+(i+1)+"…");
+        try{
+          const r=parseJSON(await callClaude(HAIKU,[
+            {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pages[i].b64}},
+            {type:"text",text:"Tu es le Lecteur. Voici une image et des textes lus par OCR (avec erreurs possibles : accents, lettres confondues, mots collés). Corrige chaque texte d'après l'image, SANS traduire, SANS rien ajouter ni retirer. Garde les \\n. Indique aussi la famille typographique de chaque zone. TEXTES : "+JSON.stringify(zs.map((z,j)=>({id:j,t:z.t})))+" Réponds UNIQUEMENT en JSON : {\"zones\":[{\"id\":n,\"t\":\"texte corrigé\",\"famille\":\"serif|sans|script\"}]}"}
+          ],2200));
+          (r.zones||[]).forEach(o=>{if(o&&o.id!=null&&zs[o.id]&&o.t){zs[o.id].t=String(o.t);zs[o.id].famille=o.famille||"sans";}});
+        }catch(e){/* on garde l'OCR brut */}
+        tick("Page "+(i+1)+" relue ✓");
+      }
+      setAg("agL","ok");
     }
 
     montreOnglets(langs);
-    /* AGENT 3+4+5 : Traducteur, Écrivain, Contrôleur — par langue */
     setAg("agT","run");
     for(let k=0;k<langs.length;k++){
       const L=langs[k];setTab(L.c,"load");
       try{
         const trad=await traduireLangue(L,(m)=>setStatus("Traducteur "+L.n+" ("+(k+1)+"/"+langs.length+") — "+m));
         setAg("agE","run");
-        const canvases=pages.map((p,i)=>ecrire(p,fonds[i],zonesParPage[i],trad[i]||[],!!L.rtl));
+        const canvases=pages.map((p,i)=>ecrire(p,zonesParPage[i],trad[i]||[],!!L.rtl));
         setAg("agE","ok");
         const verdict=controler(trad);
         results[L.c]={canvases:canvases,verdict:verdict};
@@ -324,36 +405,8 @@ async function run(){
   finally{$("#runBtn").disabled=false;$("#runBtn").textContent="Traduire le document";}
 }
 
-/* ===== AGENT 2 : Gardien du fond ===== */
-function gommer(page,zones){
-  const c=document.createElement("canvas");c.width=page.W;c.height=page.H;
-  const ctx=c.getContext("2d");
-  ctx.drawImage(page.img,0,0);
-  const data=ctx.getImageData(0,0,c.width,c.height);
-  zones.forEach(z=>{
-    const pad=0.6;
-    const x=Math.max(0,Math.round((z.x-pad)/100*c.width)), y=Math.max(0,Math.round((z.y-pad)/100*c.height));
-    const w=Math.min(c.width-x,Math.round((z.w+pad*2)/100*c.width)), h=Math.min(c.height-y,Math.round((z.h+pad*2)/100*c.height));
-    if(w<=0||h<=0)return;
-    const col=couleurBord(data,c.width,c.height,x,y,w,h);
-    ctx.fillStyle=col;ctx.fillRect(x,y,w,h);
-    z._px={x:x,y:y,w:w,h:h};
-  });
-  return c;
-}
-function couleurBord(data,W,H,x,y,w,h){
-  /* médiane des pixels du pourtour de la boîte = couleur du fond local */
-  const pts=[];const step=Math.max(2,Math.round(w/40));
-  for(let i=x;i<x+w;i+=step){pts.push(px(data,W,i,Math.max(0,y-3)));pts.push(px(data,W,i,Math.min(H-1,y+h+3)));}
-  const stepY=Math.max(2,Math.round(h/24));
-  for(let j=y;j<y+h;j+=stepY){pts.push(px(data,W,Math.max(0,x-3),j));pts.push(px(data,W,Math.min(W-1,x+w+3),j));}
-  const med=k=>{const a=pts.map(p=>p[k]).sort((u,v)=>u-v);return a[Math.floor(a.length/2)]||255;};
-  return "rgb("+med(0)+","+med(1)+","+med(2)+")";
-}
-function px(data,W,x,y){const i=(y*W+x)*4;return[data.data[i],data.data[i+1],data.data[i+2]];}
-
 /* ===== AGENT 3 : Traducteur ===== */
-const REGLES="RÈGLES ABSOLUES : (1) PRIX, chiffres, téléphones, devises : identiques au caractère près. (2) MARQUES et noms propres (enseignes, hôtels, alcools, vins) : jamais traduits ni translittérés. (3) Plats/mots internationaux (Pasta, Pizza, Tapas, Couscous, Frutti di Mare…) : gardés tels quels. (4) Traduction naturelle de métier, comme un natif. (5) Garde les \\n aux mêmes endroits logiques et les **astérisques** autour des mêmes mots. (6) Une entrée = une sortie, même id, rien d'omis.";
+const REGLES="RÈGLES ABSOLUES : (1) PRIX, chiffres, téléphones, devises : identiques au caractère près. (2) MARQUES et noms propres (enseignes, hôtels, alcools, vins) : jamais traduits ni translittérés. (3) Plats/mots internationaux (Pasta, Pizza, Tapas, Couscous, Frutti di Mare…) : gardés tels quels. (4) Traduction naturelle de métier, comme un natif. (5) Une entrée = une sortie, même id, rien d'omis. (6) Reste concis : une traduction de longueur proche de l'original.";
 async function traduireLangue(L,onMsg){
   const out=[];
   for(let i=0;i<pages.length;i++){
@@ -371,78 +424,83 @@ async function traduireLangue(L,onMsg){
         if(arr.length)done=zs.map((z,j)=>{const f=arr.find(a=>a.id===j);return f&&f.t?String(f.t):z.t;});
       }catch(e){}
     }
-    out.push(done||zs.map(z=>z.t));
-    if(!done)out[out.length-1]._echec=true;
+    const res=done||zs.map(z=>z.t);
+    if(!done)res._echec=true;
+    out.push(res);
   }
   return out;
 }
 
-/* ===== AGENT 4 : Écrivain ===== */
-function ecrire(page,fond,zones,textes,rtl){
+/* ===== AGENT 4 : Écrivain (efface + réécrit au pixel) ===== */
+function ecrire(page,zones,textes,rtl){
   const c=document.createElement("canvas");c.width=page.W;c.height=page.H;
   const ctx=c.getContext("2d");
-  ctx.drawImage(fond,0,0);
+  ctx.drawImage(page.img,0,0);
+  /* effacement ligne par ligne (précis) */
+  zones.forEach(z=>{
+    z.lignes.forEach(l=>{
+      const pad=Math.max(2,(l.y1-l.y0)*0.14);
+      ctx.fillStyle="rgb("+z.fond[0]+","+z.fond[1]+","+z.fond[2]+")";
+      ctx.fillRect(l.x0-pad,l.y0-pad,(l.x1-l.x0)+pad*2,(l.y1-l.y0)+pad*2);
+    });
+  });
+  /* réécriture zone par zone */
   zones.forEach((z,j)=>{
-    const t=String(textes[j]!=null?textes[j]:z.t).replace(/\*\*/g,"");
-    const box=z._px||{x:z.x/100*c.width,y:z.y/100*c.height,w:z.w/100*c.width,h:z.h/100*c.height};
-    dessineTexte(ctx,t,box,z,rtl,c.width);
+    const t=String(textes[j]!=null?textes[j]:z.t);
+    dessine(ctx,t,z,rtl);
   });
   return c;
 }
-function dessineTexte(ctx,texte,box,z,rtl,W){
-  const fam=z.famille==="serif"?'Georgia,"Times New Roman",serif':(z.famille==="script"?'"Segoe Script","Comic Sans MS",cursive':'Inter,Arial,sans-serif');
-  const poids=z.poids==="bold"?"700 ":"400 ";
-  const lignesSrc=texte.split(/\n/).filter(s=>s.trim().length);
-  const nLignes=Math.max(1,lignesSrc.length||1);
-  let size=Math.min(box.h/nLignes*0.78,box.h*0.9);
-  ctx.textBaseline="middle";
-  if(rtl){ctx.direction="rtl";}else{ctx.direction="ltr";}
-  /* auto-ajustement : réduire la taille jusqu'à ce que chaque ligne (après wrap) tienne */
+function dessine(ctx,texte,z,rtl){
+  const fam=z.famille==="serif"?'Georgia,"Times New Roman",serif':(z.famille==="script"?'"Segoe Script",cursive':'Inter,Arial,sans-serif');
+  const poids=z.gras?"700 ":"400 ";
+  const boxW=z.x1-z.x0, boxH=(z.y1-z.y0)+z.pitch*0.2;
+  let size=z.hMoy*0.92;
+  ctx.textBaseline="alphabetic";
+  ctx.direction=rtl?"rtl":"ltr";
+  const src=texte.split(/\n/).map(s=>s.trim()).filter(Boolean);
   let lignes=[];
-  for(let essai=0;essai<24;essai++){
+  for(let e=0;e<22;e++){
     ctx.font=poids+size+"px "+fam;
     lignes=[];
-    lignesSrc.forEach(ls=>{lignes.push(...wrap(ctx,ls.trim(),box.w*0.98));});
+    if(src.length>1){src.forEach(s=>lignes.push(...wrap(ctx,s,boxW*1.02)));}
+    else lignes=wrap(ctx,src[0]||"",boxW*1.02);
     if(!lignes.length)lignes=[""];
-    const hTotal=lignes.length*size*1.22;
+    const pitch=Math.max(size*1.12,z.pitch*(size/(z.hMoy*0.92)));
     const wMax=Math.max(...lignes.map(l=>ctx.measureText(l).width));
-    if(hTotal<=box.h*1.06&&wMax<=box.w*1.01)break;
+    if(lignes.length*pitch<=boxH*1.12&&wMax<=boxW*1.04)break;
     size*=0.93;
   }
-  ctx.fillStyle=z.c||"#222";
-  const lh=size*1.22;
-  const y0=box.y+box.h/2-(lignes.length-1)*lh/2;
+  ctx.fillStyle="rgb("+z.encre[0]+","+z.encre[1]+","+z.encre[2]+")";
+  const pitch=Math.max(size*1.12,z.pitch*(size/(z.hMoy*0.92)));
+  const asc=size*0.78;
   lignes.forEach((l,i)=>{
     let x;
-    if(z.align==="center"){ctx.textAlign="center";x=box.x+box.w/2;}
-    else if((z.align==="right"&&!rtl)||(rtl&&z.align!=="left")){ctx.textAlign="right";x=box.x+box.w;}
-    else{ctx.textAlign="left";x=box.x;}
-    ctx.fillText(l,x,y0+i*lh);
+    if(z.align==="center"){ctx.textAlign="center";x=(z.x0+z.x1)/2;}
+    else if(rtl){ctx.textAlign="right";x=z.x1;}
+    else{ctx.textAlign="left";x=z.x0;}
+    ctx.fillText(l,x,z.y0+asc+i*pitch);
   });
 }
 function wrap(ctx,texte,maxW){
   const mots=texte.split(/\s+/);const out=[];let cur="";
-  mots.forEach(m=>{
-    const test=cur?cur+" "+m:m;
+  mots.forEach(m=>{const test=cur?cur+" "+m:m;
     if(ctx.measureText(test).width<=maxW||!cur)cur=test;
-    else{out.push(cur);cur=m;}
-  });
+    else{out.push(cur);cur=m;}});
   if(cur)out.push(cur);
   return out;
 }
 
-/* ===== AGENT 5 : Contrôleur (code pur) ===== */
-function chiffres(s){return (String(s).match(/\d[\d.,]*/g)||[]).map(x=>x.replace(/[.,]$/,""));}
+/* ===== AGENT 5 : Contrôleur ===== */
+function chiffres(s){return (String(s).match(/\d[\d.,]*/g)||[]).map(x=>x.replace(/[.,]$/,"")).sort().join("|");}
 function controler(trad){
   let zonesOk=0,zonesTot=0,chiffresKO=0,pagesEchec=[];
   zonesParPage.forEach((zs,i)=>{
     if(trad[i]&&trad[i]._echec)pagesEchec.push(i+1);
-    zs.forEach((z,j)=>{
-      zonesTot++;
+    zs.forEach((z,j)=>{zonesTot++;
       const t=trad[i]&&trad[i][j];
       if(t&&String(t).trim())zonesOk++;
-      const a=chiffres(z.t).sort().join("|"),b=chiffres(t||"").sort().join("|");
-      if(a!==b)chiffresKO++;
+      if(chiffres(z.t)!==chiffres(t||""))chiffresKO++;
     });
   });
   return{zonesOk:zonesOk,zonesTot:zonesTot,chiffresKO:chiffresKO,pagesEchec:pagesEchec};
@@ -453,7 +511,7 @@ function majRapport(){
   const r=$("#report");
   r.className="report show"+(tousOk?"":" warn");
   if(tousOk){
-    r.textContent="✓ Contrôle final : "+pages.length+" page(s) · "+cs.length+" langue(s) · "+nbZones+" zones de texte · visuel d'origine préservé · aucun chiffre modifié.";
+    r.textContent="✓ Contrôle final : "+pages.length+" page(s) · "+cs.length+" langue(s) · "+nbZones+" zones mesurées au pixel · visuel d'origine préservé · aucun chiffre modifié.";
   }else{
     const soucis=cs.map(c=>{const v=results[c].verdict;const L=LANGS.find(x=>x.c===c);const p=[];
       if(v.pagesEchec.length)p.push("page "+v.pagesEchec.join(", ")+" non traduite");
@@ -486,7 +544,7 @@ function affiche(c){
   const v=$("#pagesview");v.innerHTML="";
   R.canvases.forEach(cv=>v.appendChild(cv));
 }
-$("#pdfBtn").onclick=()=>{
+$("#dlBtn").onclick=()=>{
   if(!currentLang||!results[currentLang])return;
   const R=results[currentLang];
   const L=LANGS.find(x=>x.c===currentLang);
