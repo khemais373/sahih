@@ -149,13 +149,13 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
     <div class="tabs" id="tabs"></div>
     <div class="pagesview" id="pagesview"></div>
     <div class="pv-actions">
-      <button class="btn btn-primary" id="pdfBtn">📥 Télécharger cette langue en PDF</button>
+      <button class="btn btn-primary" id="pdfBtn">📥 Télécharger cette langue en image (JPEG)</button>
     </div>
   </div>
 
   <div class="card">
     <h2>Comment ça marche</h2>
-    <p class="empty-help" style="margin-top:8px"><b>1.</b> Chargez votre document — logos, images et décors resteront exactement tels quels. <b>2.</b> Cochez les langues. <b>3.</b> Le Scanneur localise chaque écriture, le Gardien du fond efface proprement le texte d'origine sans toucher au reste, le Traducteur traduit (prix et marques intacts), l'Écrivain réécrit chaque texte à sa place exacte — même couleur, même alignement — et le Contrôleur vérifie qu'aucun chiffre n'a bougé. <b>4.</b> Téléchargez chaque langue en PDF au format d'origine.</p>
+    <p class="empty-help" style="margin-top:8px"><b>1.</b> Chargez votre document — logos, images et décors resteront exactement tels quels. <b>2.</b> Cochez les langues. <b>3.</b> Le Scanneur localise chaque écriture, le Gardien du fond efface proprement le texte d'origine sans toucher au reste, le Traducteur traduit (prix et marques intacts), l'Écrivain réécrit chaque texte à sa place exacte — même couleur, même alignement — et le Contrôleur vérifie qu'aucun chiffre n'a bougé. <b>4.</b> Téléchargez chaque langue en image JPEG, au format d'origine.</p>
   </div>
 </div></main>
 
@@ -489,20 +489,14 @@ function affiche(c){
 $("#pdfBtn").onclick=()=>{
   if(!currentLang||!results[currentLang])return;
   const R=results[currentLang];
-  const root=$("#printroot");root.innerHTML="";
-  const wmm=Math.round(pages[0].W/pages[0].H*297*(pages[0].W>pages[0].H?0:1))||210;
-  /* format : on cale la page d'impression sur le ratio du document */
-  const ratio=pages[0].H/pages[0].W;
-  const pw=210, ph=Math.round(210*ratio);
-  let st=document.getElementById("printsize");
-  if(!st){st=document.createElement("style");st.id="printsize";document.head.appendChild(st);}
-  st.textContent="@page{size:"+pw+"mm "+ph+"mm;margin:0}";
-  R.canvases.forEach(cv=>{
-    const im=document.createElement("img");
-    im.src=cv.toDataURL("image/jpeg",0.93);
-    root.appendChild(im);
+  const L=LANGS.find(x=>x.c===currentLang);
+  R.canvases.forEach((cv,i)=>{
+    const url=cv.toDataURL("image/jpeg",0.95);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="scandar-"+L.c+(R.canvases.length>1?("-page"+(i+1)):"")+".jpg";
+    document.body.appendChild(a);a.click();a.remove();
   });
-  setTimeout(()=>window.print(),500);
 };
 </script>
 </body>
