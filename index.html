@@ -313,7 +313,7 @@ async function run(){
   hideErr();results={};$("#kDone").textContent="0";
   $("#runBtn").disabled=true;$("#runBtn").textContent="Génération…";
   $("#prog").classList.add("show");
-  const totalSteps=(docPlan?0:pagesImgs.length*1.5)+langs.length+0.5;let step=0;
+  const totalSteps=(docPlan?0:pagesImgs.length*1.5)+langs.length*Math.max(1,pagesImgs.length*0.6)+0.5;let step=0;
   const tick=(label)=>{step++;$("#progFill").style.width=Math.min(100,Math.round(step/totalSteps*100))+"%";$("#progLabel").textContent=label;};
   try{
     /* AGENT 2+3 : Architecte + Vérificateur (une seule fois par document) */
@@ -350,24 +350,20 @@ async function run(){
 
     montreOnglets(langs);
     setAg("agT","run");
-    /* AGENT 4 : Traducteur (par langue, tout le document en 1 appel) */
+    /* AGENT 4 : Traducteur — page par page (appels courts, fiables) */
     const paquet=docPlan.map((pg,i)=>({page:i+1,blocs:extraitTextes(pg)}));
     for(let k=0;k<langs.length;k++){
       const L=langs[k];
-      setStatus("Traducteur — "+L.n+" ("+(k+1)+"/"+langs.length+")…");
       setTab(L.c,"load");
       try{
-        const tr=parseJSON(await callClaude(SONNET,[
-          {type:"text",text:"Tu es traducteur professionnel natif (hôtellerie, restauration, supports commerciaux). Traduis en "+L.n+" ("+L.c+") UNIQUEMENT les valeurs textuelles de ce document. RÈGLES ABSOLUES : (1) PRIX, chiffres, téléphones : identiques au caractère près, jamais convertis. (2) MARQUES et noms propres (enseignes, alcools, vins, personnages) : jamais traduits ni translittérés. (3) Plats/mots internationaux (Pasta, Pizza, Tapas, noms de plats italiens ou tunisiens comme Frutti di Mare, Couscous, Ojja) : gardés tels quels ; seules leurs descriptions se traduisent. (4) Traduction de métier, naturelle, comme écrite par un natif. (5) Conserve les **astérisques** autour des mêmes mots. (6) Rien omis, rien ajouté, même structure exactement. DOCUMENT : "+JSON.stringify(paquet)+" Réponds UNIQUEMENT avec le même JSON traduit."}
-        ],4000));
-        /* AGENT 5 : Contrôle final par code — prix intacts */
-        const verdict=controleFinal(paquet,tr);
-        results[L.c]={tr:tr,verdict:verdict};
+        const trPages=await traduireLangue(L,paquet,(msg)=>setStatus("Traducteur "+L.n+" ("+(k+1)+"/"+langs.length+") — "+msg));
+        const verdict=controleFinal(paquet,trPages);
+        results[L.c]={tr:trPages,verdict:verdict};
         setTab(L.c,"done");
         $("#kDone").textContent=Object.keys(results).length;
         if(!currentLang){currentLang=L.c;affiche(L.c);}
       }catch(e){setTab(L.c,"err");console.error(L.c,e);}
-      tick(L.n+" ✓");
+      tick(L.n+(results[L.c]?" ✓":" ✗"));
     }
     setAg("agT","ok");setAg("agC","ok");
     const ok=Object.keys(results).length;
@@ -386,21 +382,60 @@ function extraitTextes(pg){
     const o={b:b.b,t:b.t};if(b.sous)o.sous=b.sous;if(b.align)o.align=b.align;if(b.taille)o.taille=b.taille;return o;
   });
 }
+function tailleTexte(p){return JSON.stringify(p.blocs||[]).length;}
+const REGLES_TRAD="RÈGLES ABSOLUES : (1) PRIX, chiffres, téléphones : identiques au caractère près, jamais convertis, jamais déplacés. (2) MARQUES et noms propres (enseignes, alcools, vins) : jamais traduits ni translittérés. (3) Plats/mots internationaux (Pasta, Pizza, Tapas, Frutti di Mare, Couscous, Ojja…) : gardés tels quels ; seules leurs descriptions se traduisent. (4) Traduction de métier, naturelle, comme écrite par un natif. (5) Conserve les **astérisques** autour des mêmes mots. (6) Rien omis, rien ajouté, même structure JSON exactement (mêmes types 'b', mêmes clés).";
+async function appelTrad(L,pages,maxTok){
+  const out=parseJSON(await callClaude(SONNET,[
+    {type:"text",text:"Tu es traducteur professionnel natif (hôtellerie, restauration, supports commerciaux). Traduis en "+L.n+" ("+L.c+") UNIQUEMENT les valeurs textuelles. "+REGLES_TRAD+" PAGES : "+JSON.stringify(pages)+" Réponds UNIQUEMENT en JSON : {\"pages\":[{\"page\":N,\"blocs\":[…]}]} — même structure, textes traduits."}
+  ],maxTok));
+  return Array.isArray(out)?out:(out.pages||[]);
+}
+async function traduireLangue(L,paquet,onMsg){
+  const legers=paquet.filter(p=>tailleTexte(p)<180);
+  const denses=paquet.filter(p=>tailleTexte(p)>=180);
+  const out=[];
+  if(legers.length){
+    onMsg("pages de titre…");
+    try{(await appelTrad(L,legers,1500)).forEach(p=>{if(p&&p.blocs)out.push(p);});}
+    catch(e){legers.forEach(p=>out.push({page:p.page,blocs:p.blocs,echec:true}));}
+  }
+  for(let i=0;i<denses.length;i++){
+    onMsg("page "+denses[i].page+"…");
+    let done=false;
+    for(let essai=0;essai<2&&!done;essai++){
+      try{
+        const arr=await appelTrad(L,[denses[i]],2400);
+        if(arr[0]&&arr[0].blocs){out.push({page:denses[i].page,blocs:arr[0].blocs});done=true;}
+      }catch(e){/* on retente une fois */}
+    }
+    if(!done)out.push({page:denses[i].page,blocs:denses[i].blocs,echec:true});
+  }
+  out.sort((a,b)=>(a.page||0)-(b.page||0));
+  if(out.every(p=>p.echec))throw new Error("Traduction impossible pour "+L.n);
+  return out;
+}
 function comptePrix(plan){let n=0;plan.forEach(pg=>(pg.blocs||[]).forEach(b=>{if(b.b==="section")(b.items||[]).forEach(it=>(it.p||[]).forEach(p=>{if(String(p).trim())n++;}));}));return n;}
-function tousPrix(paquet){const arr=[];paquet.forEach(pg=>(pg.blocs||[]).forEach(b=>{if(b.b==="section")(b.items||[]).forEach(it=>(it.p||[]).forEach(p=>arr.push(String(p).trim())));}));return arr;}
-function controleFinal(orig,trad){
-  const a=tousPrix(orig),b=tousPrix(trad.map?trad:[]);
-  const t=Array.isArray(trad)?trad:(trad.pages||trad);
-  const bb=tousPrix(Array.isArray(t)?t:[]);
-  const prixOk=a.length===bb.length&&a.every((p,i)=>p===bb[i]);
-  return{prixOk:prixOk,nbPrix:a.length,structOk:Array.isArray(t)&&t.length===orig.length};
+function tousPrix(pages){const arr=[];(pages||[]).forEach(pg=>(pg.blocs||[]).forEach(b=>{if(b.b==="section")(b.items||[]).forEach(it=>(it.p||[]).forEach(p=>arr.push(String(p).trim())));}));return arr;}
+function controleFinal(orig,trPages){
+  const a=tousPrix(orig),b=tousPrix(trPages);
+  const prixOk=a.length===b.length&&a.every((p,i)=>p===b[i]);
+  const structOk=trPages.length===orig.length&&!trPages.some(p=>p.echec);
+  return{prixOk:prixOk,nbPrix:a.length,structOk:structOk,pagesEchec:trPages.filter(p=>p.echec).map(p=>p.page)};
 }
 function majRapport(){
   const langsOk=Object.keys(results);if(!langsOk.length)return;
   const tousOk=langsOk.every(c=>results[c].verdict.prixOk&&results[c].verdict.structOk);
   const r=$("#report");
   r.className="report show"+(tousOk?"":" warn");
-  r.textContent=(tousOk?"✓ Contrôle final : ":"⚠️ Contrôle : ")+pagesImgs.length+" page(s) · "+langsOk.length+" langue(s) · "+prixTotal+" prix vérifiés — "+(tousOk?"aucun prix modifié, structure conforme.":"vérifie les versions signalées avant diffusion.");
+  let txt=(tousOk?"✓ Contrôle final : ":"⚠️ Contrôle : ")+pagesImgs.length+" page(s) · "+langsOk.length+" langue(s) · "+prixTotal+" prix vérifiés — ";
+  if(tousOk)txt+="aucun prix modifié, structure conforme.";
+  else{
+    const soucis=langsOk.filter(c=>!results[c].verdict.structOk||!results[c].verdict.prixOk)
+      .map(c=>{const L=LANGS.find(x=>x.c===c);const v=results[c].verdict;
+        return L.n+(v.pagesEchec&&v.pagesEchec.length?" (page "+v.pagesEchec.join(", ")+" restée en langue d'origine)":"")+(v.prixOk?"":" (prix à revérifier)");}).join(" · ");
+    txt+="à revoir : "+soucis+". Relance « Traduire » pour compléter.";
+  }
+  r.textContent=txt;
   $("#kPrix").textContent=prixTotal+" ✓";
 }
 
