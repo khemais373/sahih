@@ -75,18 +75,29 @@ main{padding:22px 0 70px}
 .pv-actions{display:flex;gap:10px;flex-wrap:wrap;padding:12px 14px;background:#FAFBFD;border-top:1px solid var(--line)}
 .docsheet{padding:34px 30px;min-height:280px}
 .docsheet.rtl{direction:rtl;text-align:right}
+.docsheet.rtl *{letter-spacing:0!important}
 .doc-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;text-align:center;letter-spacing:.01em}
+.docsheet.rtl .doc-title{font-family:'Inter',system-ui,sans-serif;font-weight:800}
 .doc-sub{text-align:center;font-size:13px;opacity:.75;margin-top:5px;text-transform:uppercase;letter-spacing:.14em}
+.docsheet.rtl .doc-sub{text-transform:none}
 .doc-sep{width:56px;height:2.5px;margin:16px auto 22px;border-radius:2px}
 .sec{margin-bottom:22px}
 .sec-t{font-family:'Playfair Display',serif;font-size:19px;font-weight:600;padding-bottom:6px;border-bottom:1.5px solid;margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline}
+.docsheet.rtl .sec-t{font-family:'Inter',system-ui,sans-serif;font-weight:700}
 .item{display:flex;justify-content:space-between;gap:14px;padding:7px 0;align-items:baseline}
 .item .in .nm{font-weight:600;font-size:14.5px}
 .item .in .ds{font-size:12.5px;opacity:.72;margin-top:2px}
 .item .pr{font-weight:700;font-size:14.5px;white-space:nowrap}
 .dots{flex:1;border-bottom:1.5px dotted rgba(0,0,0,.22);transform:translateY(-4px);min-width:20px}
 .freeblock{font-size:14px;line-height:1.8;margin-bottom:16px;white-space:pre-wrap}
+/* Mode AFFICHE : blocs centrés, grands, mots forts en accent */
+.docsheet.affiche .freeblock{font-size:17px;line-height:1.75;text-align:center;max-width:560px;margin:0 auto 22px}
+.docsheet.affiche .doc-title{font-size:34px}
+.docsheet.affiche .highlight-band{border-radius:14px;padding:18px 22px;margin:0 auto 22px;max-width:600px;font-size:16.5px;line-height:1.7;text-align:center;font-weight:600}
+.hl{font-weight:800}
 .doc-foot{text-align:center;font-size:12px;opacity:.7;margin-top:26px;font-style:italic}
+@page{margin:0}
+
 .note{font-size:11.5px;color:var(--soft);margin-top:12px}
 .hidden{display:none}
 .empty-help{font-size:13px;color:var(--soft);line-height:1.7}
@@ -304,7 +315,7 @@ async function run(){
       $("#progLabel").textContent="Analyse du document…";
       extracted=parseJSON(await callClaude(HAIKU,[
         {type:"image",source:{type:"base64",media_type:"image/jpeg",data:imageData}},
-        {type:"text",text:"Tu analyses un document commercial (menu de restaurant, affiche, flyer, carte de soins, tarifs…). Extrais TOUT le contenu et le STYLE VISUEL. Réponds UNIQUEMENT en JSON sans markdown : {\"type_document\":\"menu|affiche|flyer|tarifs|autre\",\"langue_source\":\"...\",\"style\":{\"couleur_primaire\":\"#hex (couleur dominante des titres/accents)\",\"couleur_fond\":\"#hex (fond du document)\",\"couleur_texte\":\"#hex\",\"ambiance\":\"élégant|chaleureux|moderne|traditionnel|festif\"},\"titre\":\"...\",\"sous_titre\":\"...ou null\",\"blocs\":[{\"type\":\"section\",\"titre\":\"...\",\"items\":[{\"nom\":\"...\",\"description\":\"...ou null\",\"prix\":\"...tel quel avec devise, ou null\"}]},{\"type\":\"texte\",\"contenu\":\"paragraphe libre\"}],\"pied\":\"...ou null\"}. RÈGLES : recopie les prix EXACTEMENT (chiffres+devise) ; n'invente rien ; garde l'ordre du document ; si un texte est illisible mets \\\"[illisible]\\\"."}
+        {type:"text",text:"Tu analyses un document commercial (menu de restaurant, affiche, flyer, carte de soins, tarifs…). Extrais TOUT le contenu et le STYLE VISUEL. Réponds UNIQUEMENT en JSON sans markdown : {\"type_document\":\"menu|affiche|flyer|tarifs|autre\",\"langue_source\":\"...\",\"style\":{\"couleur_primaire\":\"#hex (couleur dominante des titres)\",\"couleur_accent\":\"#hex (2e couleur forte du document : mots en évidence, éléments décoratifs — si absente, reprends la primaire)\",\"couleur_fond\":\"#hex (fond du document)\",\"couleur_texte\":\"#hex\",\"ambiance\":\"élégant|chaleureux|moderne|traditionnel|festif\"},\"titre\":\"...\",\"sous_titre\":\"...ou null\",\"blocs\":[{\"type\":\"section\",\"titre\":\"...\",\"items\":[{\"nom\":\"...\",\"description\":\"...ou null\",\"prix\":\"...tel quel avec devise, ou null\"}]},{\"type\":\"texte\",\"contenu\":\"paragraphe tel qu'écrit\"},{\"type\":\"bandeau\",\"contenu\":\"passage mis en évidence dans un encadré/fond coloré\"}],\"pied\":\"...ou null\"}. RÈGLES : (1) recopie les prix EXACTEMENT (chiffres+devise) ; (2) N'INVENTE JAMAIS de titres — si un passage n'a pas de titre dans le document, utilise un bloc 'texte' ou 'bandeau' sans titre ; utilise 'section'+items UNIQUEMENT pour de vraies listes type menu/tarifs ; (3) pour une affiche/flyer : respecte l'ordre et le découpage des paragraphes tels quels ; un passage dans un encadré coloré = bloc 'bandeau' ; (4) entoure les mots visuellement mis en évidence (gras/couleur) de **doubles astérisques** dans le contenu ; (5) les noms propres (hôtel, marque, enseigne) restent EXACTEMENT tels quels ; (6) n'invente rien ; texte illisible = \\\"[illisible]\\\"."}
       ],2500));
       tick("Document analysé ✓");
     } else { tick("Document déjà analysé ✓"); }
@@ -319,7 +330,7 @@ async function run(){
       $("#progLabel").textContent="Traduction en "+L.n+"…";
       try{
         const tr=parseJSON(await callClaude(SONNET,[
-          {type:"text",text:"Tu es traducteur professionnel spécialisé en hôtellerie-restauration et supports commerciaux. Traduis ce contenu en "+L.n+" ("+L.c+"). RÈGLES STRICTES : (1) Les PRIX, chiffres, numéros de téléphone et devises restent EXACTEMENT identiques, jamais convertis. (2) Les noms propres de plats/produits authentiques restent dans leur langue (Couscous, Ojja, Brik, Harissa, Mechouia…) — traduis seulement leur description. (3) Traduction de MÉTIER, naturelle et appétissante, comme écrite par un natif — jamais littérale. (4) Ne rien omettre, ne rien ajouter. (5) Garde la même structure JSON. CONTENU : "+JSON.stringify({titre:extracted.titre,sous_titre:extracted.sous_titre,blocs:extracted.blocs,pied:extracted.pied})+" Réponds UNIQUEMENT avec le même JSON traduit, sans markdown."}
+          {type:"text",text:"Tu es traducteur professionnel spécialisé en hôtellerie-restauration et supports commerciaux. Traduis ce contenu en "+L.n+" ("+L.c+"). RÈGLES STRICTES : (1) Les PRIX, chiffres, numéros de téléphone et devises restent EXACTEMENT identiques, jamais convertis. (2) Les noms propres de plats/produits authentiques restent dans leur langue (Couscous, Ojja, Brik, Harissa, Mechouia…) — traduis seulement leur description. (3) Le NOM DE L'ENSEIGNE (hôtel, restaurant, marque — ex. dans le titre) reste EXACTEMENT tel quel, jamais traduit ni translittéré. (4) Traduction de MÉTIER, naturelle, comme écrite par un natif — jamais littérale. (5) Conserve les **doubles astérisques** autour des mêmes mots mis en évidence dans la traduction. (6) Ne rien omettre, ne rien ajouter. (7) Garde la même structure JSON (mêmes types de blocs). CONTENU : "+JSON.stringify({titre:extracted.titre,sous_titre:extracted.sous_titre,blocs:extracted.blocs,pied:extracted.pied})+" Réponds UNIQUEMENT avec le même JSON traduit, sans markdown."}
         ],3000));
         results[L.c]=tr;setTab(L.c,"done");
         $("#kpiDone").textContent=Object.keys(results).length;
@@ -357,26 +368,31 @@ function affiche(c){
   const L=LANGS.find(x=>x.c===c),tr=results[c];if(!tr)return;
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.dataset.c===c));
   const st=extracted.style||{};
-  const prim=st.couleur_primaire||"#1D3A5F", fond=st.couleur_fond||"#FFFDF8", txt=st.couleur_texte||"#222";
+  const prim=st.couleur_primaire||"#1D3A5F", accent=st.couleur_accent||prim,
+        fond=st.couleur_fond||"#FFFDF8", txt=st.couleur_texte||"#222";
+  const isAffiche=["affiche","flyer","autre"].includes(extracted.type_document);
   const sheet=$("#sheet");
-  sheet.className="docsheet"+(L.rtl?" rtl":"");
+  sheet.className="docsheet"+(L.rtl?" rtl":"")+(isAffiche?" affiche":"");
   sheet.style.background=fond;sheet.style.color=txt;
-  let h='<div class="doc-title" style="color:'+prim+'">'+esc(tr.titre||extracted.titre||"")+'</div>';
-  if(tr.sous_titre)h+='<div class="doc-sub">'+esc(tr.sous_titre)+'</div>';
-  h+='<div class="doc-sep" style="background:'+prim+'"></div>';
+  const hl=(s)=>esc(s).replace(/\*\*(.+?)\*\*/g,'<span class="hl" style="color:'+accent+'">$1</span>');
+  let h='<div class="doc-title" style="color:'+prim+'">'+hl(tr.titre||extracted.titre||"")+'</div>';
+  if(tr.sous_titre)h+='<div class="doc-sub">'+hl(tr.sous_titre)+'</div>';
+  h+='<div class="doc-sep" style="background:'+accent+'"></div>';
   (tr.blocs||[]).forEach(b=>{
-    if(b.type==="section"){
-      h+='<div class="sec"><div class="sec-t" style="color:'+prim+';border-color:'+prim+'33">'+esc(b.titre||"")+'</div>';
+    if(b.type==="section"&&b.items&&b.items.length){
+      h+='<div class="sec">'+(b.titre?'<div class="sec-t" style="color:'+prim+';border-color:'+prim+'33">'+hl(b.titre)+'</div>':'');
       (b.items||[]).forEach(it=>{
-        h+='<div class="item"><div class="in"><div class="nm">'+esc(it.nom||"")+'</div>'+(it.description?'<div class="ds">'+esc(it.description)+'</div>':'')+'</div>'
-          +(it.prix?'<div class="dots"></div><div class="pr" style="color:'+prim+'">'+esc(it.prix)+'</div>':'')+'</div>';
+        h+='<div class="item"><div class="in"><div class="nm">'+hl(it.nom||"")+'</div>'+(it.description?'<div class="ds">'+hl(it.description)+'</div>':'')+'</div>'
+          +(it.prix?'<div class="dots"></div><div class="pr" style="color:'+accent+'">'+esc(it.prix)+'</div>':'')+'</div>';
       });
       h+='</div>';
-    } else if(b.type==="texte"&&b.contenu){
-      h+='<div class="freeblock">'+esc(b.contenu)+'</div>';
+    } else if(b.type==="bandeau"&&b.contenu){
+      h+='<div class="highlight-band" style="background:'+prim+';color:#fff">'+hl(b.contenu).replace(/style="color:[^"]*"/g,'style="color:'+accent+'"')+'</div>';
+    } else if(b.contenu){
+      h+='<div class="freeblock">'+hl(b.contenu)+'</div>';
     }
   });
-  if(tr.pied)h+='<div class="doc-foot">'+esc(tr.pied)+'</div>';
+  if(tr.pied)h+='<div class="doc-foot">'+hl(tr.pied)+'</div>';
   sheet.innerHTML=h;
 }
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
@@ -395,13 +411,14 @@ $("#pdfBtn").onclick=()=>{
 };
 $("#copyBtn").onclick=()=>{
   if(!currentLang||!results[currentLang])return;
-  const tr=results[currentLang];let out=(tr.titre||"")+"\n"+(tr.sous_titre||"")+"\n\n";
+  const tr=results[currentLang];let out=((tr.titre||"")+"\n"+(tr.sous_titre||"")+"\n\n").replace(/\*\*/g,"");
   (tr.blocs||[]).forEach(b=>{
-    if(b.type==="section"){out+="== "+(b.titre||"")+" ==\n";
+    if(b.type==="section"&&b.items){out+=(b.titre?("== "+b.titre+" ==\n"):"");
       (b.items||[]).forEach(it=>{out+=(it.nom||"")+(it.prix?" — "+it.prix:"")+"\n"+(it.description?("   "+it.description+"\n"):"");});out+="\n";}
     else if(b.contenu)out+=b.contenu+"\n\n";
   });
   if(tr.pied)out+=tr.pied;
+  out=out.replace(/\*\*/g,"");
   navigator.clipboard.writeText(out);
   $("#copyBtn").textContent="✓ Copié";setTimeout(()=>$("#copyBtn").textContent="Copier le texte",1500);
 };
