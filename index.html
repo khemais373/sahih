@@ -280,6 +280,14 @@ async function callClaude(model,content,maxTokens){
 }
 function parseJSON(t){const c=String(t).replace(/```json/gi,"").replace(/```/g,"").trim();
   const a=c.indexOf("{"),b=c.lastIndexOf("}");return JSON.parse(a>=0&&b>=0?c.slice(a,b+1):c);}
+async function callJSON(model,content,maxTok,essais){
+  let last=null;
+  for(let e=0;e<(essais||2);e++){
+    try{return parseJSON(await callClaude(model,content,maxTok));}
+    catch(err){last=err;}
+  }
+  throw last;
+}
 
 $("#testBtn").onclick=async()=>{
   const d=$("#diag");d.className="diag";d.style.display="none";$("#testBtn").textContent="Test…";
@@ -308,11 +316,11 @@ async function run(){
       for(let i=0;i<pages.length;i++){
         setStatus("Lecteur — page "+(i+1)+"/"+pages.length+"…");
         const askStyle=i===0?' Donne aussi "style":{"primaire":"#hex titres","accent":"#hex 2e couleur forte","fond":"#hex fond clair","fonce":"#hex sombre","ambiance":"élégant|chaleureux|moderne|traditionnel|festif","police":"serif|sans","etoiles":nombre d\'étoiles de classement si visible sinon null}, "langue_source":"code (fr/en/ar…)", "enseigne":"nom de l\'établissement si visible sinon null".':'';
-        const pg=parseJSON(await callClaude(HAIKU,[
+        const pg=await callJSON(HAIKU,[
           {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pages[i].b64}},
           {type:"text",text:"Tu lis la page "+(i+1)+" d'un document commercial (menu, carte, tarifs, affiche). Extrais TOUT le texte dans le schéma. "+SPEC+askStyle+" Réponds UNIQUEMENT avec le JSON de la page."}
-        ],2800));
-        if(i===0){docPlan.style=pg.style||{};srcLang=(pg.langue_source||"fr").slice(0,2);docPlan.enseigne=pg.enseigne||null;}
+        ],2800,2);
+        if(i===0){docPlan.style=pg.style||{};srcLang=(pg.langue_source||"fr").slice(0,2).toLowerCase();docPlan.enseigne=pg.enseigne||null;}
         docPlan.pages.push({type:pg.type||"contenu",blocs:pg.blocs||[]});
         tick("Page "+(i+1)+" lue ✓");
       }
@@ -323,10 +331,10 @@ async function run(){
         if(!(pg.blocs||[]).some(b=>b.b==="section")){tick("Page "+(i+1)+" — ok");continue;}
         setStatus("Vérificateur — page "+(i+1)+"…");
         try{
-          const fix=parseJSON(await callClaude(HAIKU,[
+          const fix=await callJSON(HAIKU,[
             {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pages[i].b64}},
             {type:"text",text:"Tu es le Vérificateur. Compare l'image et l'extraction LIGNE PAR LIGNE : éléments manquants, prix inexacts, fautes. Renvoie le JSON corrigé COMPLET (même schéma), UNIQUEMENT le JSON. "+SPEC+" EXTRACTION : "+JSON.stringify(pg)}
-          ],2800));
+          ],2800,1);
           if(fix&&fix.blocs)docPlan.pages[i]={type:fix.type||pg.type,blocs:fix.blocs};
         }catch(e){}
         tick("Page "+(i+1)+" vérifiée ✓");
@@ -341,33 +349,29 @@ async function run(){
     if(srcInfo&&!langs.some(l=>l.c===srcLang))ordre.push(srcInfo);
     ordre.push(...langs);
     traductions={};traductions[srcLang]=docPlan.pages;
+    const echouees=[];
     setAg("agT","run");
     for(const L of ordre){
       if(L.c===srcLang)continue;
-      let pagesTr=[],echecs=0;
+      let pagesTr=[],blocsKO=0,blocsTot=0;
       for(let i=0;i<docPlan.pages.length;i++){
-        setStatus("Traducteur "+L.n+" — page "+(i+1)+"/"+docPlan.pages.length+"…");
         const pg=docPlan.pages[i];
-        if(!(pg.blocs||[]).length){pagesTr.push(pg);tick("");continue;}
-        let done=null;
-        for(let e=0;e<2&&!done;e++){
-          try{
-            const r=parseJSON(await callClaude(SONNET,[
-              {type:"text",text:"Traducteur professionnel natif (hôtellerie, restauration, commerce). Traduis en "+L.n+" ("+L.c+") les textes de cette page. RÈGLES : (1) PRIX/chiffres/téléphones identiques au caractère près. (2) MARQUES, noms propres, enseignes : jamais traduits. (3) Mots internationaux de cuisine (Pasta, Pizza, Tapas, Couscous, Frutti di Mare…) tels quels ; seules les descriptions se traduisent. (4) Naturel, comme un natif. (5) Garde les **astérisques**. (6) Même structure JSON, rien omis. PAGE : "+JSON.stringify(pg)+" Réponds UNIQUEMENT avec le JSON traduit."}
-            ],2400));
-            if(r&&r.blocs)done={type:pg.type,blocs:r.blocs};
-          }catch(err){}
-        }
-        if(done)pagesTr.push(done);else{pagesTr.push(pg);echecs++;}
+        if(!(pg.blocs||[]).length){pagesTr.push(pg);continue;}
+        setStatus("Traducteur "+L.n+" — page "+(i+1)+"/"+docPlan.pages.length+"…");
+        const res=await traduirePage(L,pg,(m)=>setStatus("Traducteur "+L.n+" — page "+(i+1)+" · "+m));
+        pagesTr.push({type:pg.type,blocs:res.blocs});
+        blocsKO+=res.ko;blocsTot+=res.tot;
         tick(L.n+" p."+(i+1)+" ✓");
       }
-      if(echecs<docPlan.pages.length)traductions[L.c]=pagesTr;
+      if(blocsTot>0&&blocsKO>=blocsTot){echouees.push(L.n);}
+      else{traductions[L.c]=pagesTr;$("#kDone").textContent=Object.keys(traductions).length;}
     }
     setAg("agT","ok");
 
     /* Compositeur : un fichier par langue + Contrôleur */
     setAg("agW","run");setStatus("Compositeur — fabrication des fichiers…");
     const v=controler();
+    v.echouees=echouees;
     files={};
     v.langsOk.forEach(c=>{files[c]=fileFor(c);});
     setAg("agW","ok");setAg("agC","ok");
@@ -383,6 +387,55 @@ async function run(){
   finally{$("#runBtn").disabled=false;$("#runBtn").textContent="Générer les fichiers";}
 }
 
+/* ===== Traduction par petits lots (appels courts, jamais coupés) ===== */
+function decoupe(blocs){
+  const lots=[];let cur=[],taille=0;
+  const push=o=>{const t=JSON.stringify(o).length;
+    if(taille+t>650&&cur.length){lots.push(cur);cur=[];taille=0;}
+    cur.push(o);taille+=t;};
+  blocs.forEach((b,i)=>{
+    if(b.b==="section"&&(b.items||[]).length>8){
+      for(let k=0;k<b.items.length;k+=8)
+        push({i:i,part:Math.floor(k/8),b:{b:"section",t:Math.floor(k/8)===0?(b.t||""):"",cols:b.cols||null,items:b.items.slice(k,k+8)}});
+    } else push({i:i,part:0,b:b});
+  });
+  if(cur.length)lots.push(cur);
+  return lots;
+}
+async function traduirePage(L,pg,onMsg){
+  const lots=decoupe(pg.blocs||[]);
+  const recus=[];let ko=0;
+  for(let n=0;n<lots.length;n++){
+    if(lots.length>1)onMsg("partie "+(n+1)+"/"+lots.length);
+    let r=null;
+    try{
+      r=await callJSON(SONNET,[
+        {type:"text",text:"Traducteur professionnel natif (hôtellerie, restauration, commerce). Traduis en "+L.n+" ("+L.c+") les textes de ces blocs. RÈGLES : (1) PRIX/chiffres/téléphones identiques au caractère près. (2) MARQUES, noms propres, enseignes : jamais traduits. (3) Mots internationaux de cuisine (Pasta, Pizza, Tapas, Couscous, Frutti di Mare…) tels quels ; seules les descriptions se traduisent. (4) Naturel, comme un natif. (5) Garde les **astérisques** et les champs i et part inchangés. (6) Même structure JSON exactement, rien omis. BLOCS : "+JSON.stringify(lots[n])+" Réponds UNIQUEMENT en JSON : {\"blocs\":[{\"i\":0,\"part\":0,\"b\":{...traduit...}}]}"}
+      ],1600,2);
+    }catch(e){}
+    const arr=(r&&r.blocs)||null;
+    if(arr&&arr.length)arr.forEach(o=>recus.push(o));
+    else{lots[n].forEach(o=>recus.push(o));ko++;}
+  }
+  /* réassemblage dans l'ordre d'origine */
+  const parIdx={};
+  recus.forEach(o=>{
+    if(!o||o.i==null||!o.b)return;
+    if(!parIdx[o.i])parIdx[o.i]=[];
+    parIdx[o.i].push(o);
+  });
+  const blocs=[];
+  (pg.blocs||[]).forEach((orig,i)=>{
+    const parts=(parIdx[i]||[]).sort((a,b)=>(a.part||0)-(b.part||0));
+    if(!parts.length){blocs.push(orig);return;}
+    if(orig.b==="section"&&parts.length>1){
+      const items=[];parts.forEach(p=>{((p.b&&p.b.items)||[]).forEach(it=>items.push(it));});
+      blocs.push({b:"section",t:(parts[0].b&&parts[0].b.t)||orig.t,cols:orig.cols||null,items:items});
+    } else blocs.push(parts[0].b);
+  });
+  return{blocs:blocs,ko:ko,tot:lots.length};
+}
+
 /* ===== Contrôleur ===== */
 function chiffresDoc(pgs){const arr=[];(pgs||[]).forEach(pg=>(pg.blocs||[]).forEach(b=>{
   if(b.b==="section")(b.items||[]).forEach(it=>(it.p||[]).forEach(p=>{const m=String(p).match(/\d[\d.,]*/g);if(m)arr.push(...m);}));
@@ -394,11 +447,18 @@ function controler(){
   return{langsOk:langsOk,soucis:soucis};
 }
 function majRapport(v){
-  const r=$("#report");const tousOk=!v.soucis.length;
+  const r=$("#report");const tousOk=!v.soucis.length&&!(v.echouees&&v.echouees.length);
   r.className="report show"+(tousOk?"":" warn");
-  $("#kPrix").textContent=nbChiffres+(tousOk?" ✓":" ⚠");
-  if(tousOk)r.textContent="✓ Contrôle final : "+pages.length+" page(s) · "+v.langsOk.length+" fichier(s) · "+nbChiffres+" chiffres vérifiés identiques dans toutes les langues.";
-  else r.textContent="⚠️ Contrôle : chiffres à revérifier en "+v.soucis.map(c=>(LANGS.find(l=>l.c===c)||{}).n||c).join(", ")+" — relance pour corriger.";
+  $("#kPrix").textContent=nbChiffres+(v.soucis.length?" ⚠":" ✓");
+  let txt;
+  if(tousOk)txt="✓ Contrôle final : "+pages.length+" page(s) · "+v.langsOk.length+" fichier(s) · "+nbChiffres+" chiffres vérifiés identiques dans toutes les langues.";
+  else{
+    const p=[];
+    if(v.echouees&&v.echouees.length)p.push("langues non générées (réseau) : "+v.echouees.join(", ")+" — relance « Générer » pour les compléter");
+    if(v.soucis.length)p.push("chiffres à revérifier en "+v.soucis.map(c=>(LANGS.find(l=>l.c===c)||{}).n||c).join(", "));
+    txt="⚠️ Contrôle : "+p.join(" · ")+".";
+  }
+  r.textContent=txt;
 }
 
 /* ===== Compositeur : un fichier autonome et fidèle par langue ===== */
@@ -511,7 +571,7 @@ function telecharger(code){
 }
 function slug(s){return String(s).toLowerCase().normalize("NFD").replace(/[^\w]+/g,"-").replace(/^-|-$/g,"").slice(0,24);}
 $("#dlOne").onclick=()=>{if(currentLang&&files[currentLang])telecharger(currentLang);};
-$("#dlAll").onclick=async()=>{const codes=Object.keys(files);for(let i=0;i<codes.length;i++){telecharger(codes[i]);await new Promise(r=>setTimeout(r,600));}};
+$("#dlAll").onclick=async()=>{const codes=Object.keys(files);for(let i=0;i<codes.length;i++){telecharger(codes[i]);await new Promise(r=>setTimeout(r,950));}};
 </script>
 </body>
 </html>
