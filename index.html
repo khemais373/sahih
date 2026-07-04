@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Scandar Translate — Documents multilingues identiques</title>
+<title>Scandar Translate — Menu web multilingue</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -45,6 +45,7 @@ main{padding:18px 0 70px}
 .qbtn{font-size:11px;font-weight:700;color:var(--soft);background:#F1F4F8;border:none;border-radius:7px;padding:6px 9px;cursor:pointer}
 .btn{font-family:inherit;font-size:14px;font-weight:700;padding:12px 20px;border-radius:10px;border:none;cursor:pointer}
 .btn-primary{background:var(--blue);color:#fff}.btn-primary:disabled{background:#B9C6D8;cursor:not-allowed}
+.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
 .status{font-size:12.5px;color:var(--blue-d);font-weight:600;min-height:18px;margin-top:10px}
 .diag{font-size:12px;margin-top:8px;padding:9px 11px;border-radius:8px;display:none}
 .diag.ok{display:block;background:var(--green-bg);color:var(--green)}
@@ -62,15 +63,8 @@ main{padding:18px 0 70px}
 .report{display:none;background:var(--green-bg);border:1px solid #BFE3CD;border-radius:12px;padding:13px 15px;font-size:12.5px;color:#14532D;margin-bottom:12px;font-weight:600}
 .report.warn{background:var(--amber-bg);border-color:#EAD3B3;color:var(--amber)}
 .report.show{display:block}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.tab{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer}
-.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-.tab .st{width:7px;height:7px;border-radius:50%;background:#CBD5E1}
-.tab.done .st{background:var(--green)}
-.tab.load .st{background:var(--amber);animation:blink 1s infinite}
-@keyframes blink{50%{opacity:.3}}
-.pagesview{display:flex;flex-direction:column;gap:16px;align-items:center;background:#EBEFF4;border:1px solid var(--line);border-radius:14px;padding:18px 10px;max-height:72vh;overflow:auto}
-.pagesview canvas{width:min(380px,92vw);height:auto;box-shadow:0 10px 30px -12px rgba(15,30,46,.35);border-radius:4px;flex:none}
+.preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#EBEFF4}
+.preview iframe{width:100%;height:66vh;border:none;display:block;background:#fff}
 .pv-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .note{font-size:11px;color:var(--soft);margin-top:10px}
 .hidden{display:none}
@@ -88,15 +82,15 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
   <div class="kpis">
     <div class="kpi"><div class="l">Pages lues</div><div class="v" id="kPages">0</div></div>
     <div class="kpi"><div class="l">Langues choisies</div><div class="v" id="kSel">0</div></div>
-    <div class="kpi"><div class="l">Versions prêtes</div><div class="v" id="kDone">0</div></div>
-    <div class="kpi"><div class="l">Zones de texte</div><div class="v" id="kZones">—</div></div>
+    <div class="kpi"><div class="l">Langues prêtes</div><div class="v" id="kDone">0</div></div>
+    <div class="kpi"><div class="l">Chiffres vérifiés</div><div class="v" id="kPrix">—</div></div>
   </div>
 
   <div class="err" id="errBox"></div>
 
   <div class="card">
     <h2><span class="n">1</span> Votre document</h2>
-    <p class="sub">Menu, affiche, flyer, tarifs… Image ou PDF jusqu'à 8 pages. <b>Le visuel d'origine est conservé tel quel</b> — seuls les textes changent de langue.</p>
+    <p class="sub">Menu, carte, tarifs, affiche… Image ou PDF jusqu'à 8 pages. Le résultat : <b>une page web multilingue élégante</b>, à relier à votre QR code.</p>
     <div id="drop" class="drop" tabindex="0" role="button">
       <div class="ic">📄</div><div class="t">Choisir un fichier</div><div class="h">JPG · PNG · PDF (multi-pages)</div>
     </div>
@@ -111,7 +105,7 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
 
   <div class="card">
     <div class="langbar">
-      <h2><span class="n">2</span> Langues à générer</h2>
+      <h2><span class="n">2</span> Langues du menu web</h2>
       <div class="quick">
         <button class="qbtn" data-q="top">Top 5</button>
         <button class="qbtn" data-q="all">Tout</button>
@@ -119,62 +113,64 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
       </div>
     </div>
     <div class="langs" id="langs"></div>
-    <p class="note">Prix, chiffres et marques jamais modifiés — contrôlés automatiquement. Arabe écrit de droite à gauche.</p>
+    <p class="note">La langue d'origine du document est toujours incluse. Le téléphone du client affiche automatiquement sa langue. Arabe en écriture droite→gauche. Prix jamais modifiés — contrôlés par code.</p>
   </div>
 
   <div class="card">
-    <h2><span class="n">3</span> Générer</h2>
-    <p class="sub">L'Arpenteur mesure chaque écriture au pixel près, le Lecteur corrige la lecture, le Traducteur traduit, l'Écrivain efface et réécrit à la place exacte, le Contrôleur vérifie.</p>
+    <h2><span class="n">3</span> Générer le menu web</h2>
+    <p class="sub">Le Lecteur lit chaque page, le Vérificateur relit, le Traducteur traduit, le Compositeur fabrique la page web multilingue, le Contrôleur vérifie les chiffres.</p>
     <div class="agents">
-      <span class="ag" id="agA">📏 Arpenteur</span>
-      <span class="ag" id="agL">🧠 Lecteur</span>
+      <span class="ag" id="agL">📖 Lecteur</span>
+      <span class="ag" id="agV">🔍 Vérificateur</span>
       <span class="ag" id="agT">🌍 Traducteur</span>
-      <span class="ag" id="agE">✍️ Écrivain</span>
+      <span class="ag" id="agW">🧩 Compositeur web</span>
       <span class="ag" id="agC">🛡️ Contrôleur</span>
     </div>
     <div style="margin-top:14px">
-      <button id="runBtn" class="btn btn-primary" disabled>Traduire le document</button>
+      <button id="runBtn" class="btn btn-primary" disabled>Générer le menu multilingue</button>
     </div>
     <div class="status" id="statusLine"></div>
     <div class="prog" id="prog"><div class="pbar"><div class="f" id="progFill"></div></div><div class="plabel" id="progLabel"></div></div>
   </div>
 
   <div class="card hidden" id="resultCard">
-    <h2><span class="n">✓</span> Résultats</h2>
+    <h2><span class="n">✓</span> Votre menu web multilingue</h2>
     <div class="report" id="report"></div>
-    <div class="tabs" id="tabs"></div>
-    <div class="pagesview" id="pagesview"></div>
+    <div class="preview"><iframe id="frame" title="Aperçu du menu multilingue"></iframe></div>
     <div class="pv-actions">
-      <button class="btn btn-primary" id="dlBtn">📥 Télécharger cette langue en image (JPEG)</button>
+      <button class="btn btn-primary" id="dlBtn">📥 Télécharger le fichier (.html)</button>
     </div>
+    <p class="note">Ce fichier unique contient toutes les langues. Mettez-le en ligne (Netlify ou scandar.tn) et reliez votre QR Scandar à son adresse : chaque client verra le menu dans sa langue.</p>
   </div>
 
   <div class="card">
     <h2>Comment ça marche</h2>
-    <p class="empty-help" style="margin-top:8px"><b>1.</b> Chargez votre document — logos, images et décors resteront exactement tels quels. <b>2.</b> Cochez les langues. <b>3.</b> L'Arpenteur (technologie de scanner) localise chaque écriture au pixel près, le Lecteur corrige la lecture, le Traducteur traduit (prix et marques intacts), l'Écrivain efface proprement et réécrit chaque texte à sa place exacte — couleur et alignement mesurés sur l'original — et le Contrôleur vérifie qu'aucun chiffre n'a bougé. <b>4.</b> Téléchargez chaque langue en image JPEG, au format d'origine.</p>
+    <p class="empty-help" style="margin-top:8px"><b>1.</b> Chargez votre menu ou vos tarifs (photo, scan ou PDF — toutes les pages sont lues). <b>2.</b> Cochez les langues de vos clients. <b>3.</b> L'intelligence Scandar lit le document, reprend ses couleurs et son ambiance, le traduit avec une qualité de natif (prix et marques intacts, contrôlés par code), et fabrique <b>une page web unique</b> avec un sélecteur de langues : le téléphone du client choisit sa langue automatiquement. <b>4.</b> Téléchargez le fichier, mettez-le en ligne, reliez votre QR — c'est fait.</p>
   </div>
 </div></main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
 if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";}
 
 const LANGS=[
- {c:"ar",n:"Arabe",fl:"🇹🇳",rtl:true},{c:"fr",n:"Français",fl:"🇫🇷"},{c:"en",n:"Anglais",fl:"🇬🇧"},
- {c:"de",n:"Allemand",fl:"🇩🇪"},{c:"it",n:"Italien",fl:"🇮🇹"},{c:"es",n:"Espagnol",fl:"🇪🇸"},
- {c:"pl",n:"Polonais",fl:"🇵🇱"},{c:"cs",n:"Tchèque",fl:"🇨🇿"},{c:"ru",n:"Russe",fl:"🇷🇺"},
- {c:"uk",n:"Ukrainien",fl:"🇺🇦"},{c:"nl",n:"Néerlandais",fl:"🇳🇱"},{c:"pt",n:"Portugais",fl:"🇵🇹"},
- {c:"ro",n:"Roumain",fl:"🇷🇴"},{c:"hu",n:"Hongrois",fl:"🇭🇺"},{c:"sk",n:"Slovaque",fl:"🇸🇰"},
- {c:"sr",n:"Serbe",fl:"🇷🇸"},{c:"sv",n:"Suédois",fl:"🇸🇪"},{c:"da",n:"Danois",fl:"🇩🇰"},
- {c:"no",n:"Norvégien",fl:"🇳🇴"},{c:"tr",n:"Turc",fl:"🇹🇷"}
+ {c:"ar",n:"Arabe",nn:"العربية",fl:"🇹🇳",rtl:true},{c:"fr",n:"Français",nn:"Français",fl:"🇫🇷"},
+ {c:"en",n:"Anglais",nn:"English",fl:"🇬🇧"},{c:"de",n:"Allemand",nn:"Deutsch",fl:"🇩🇪"},
+ {c:"it",n:"Italien",nn:"Italiano",fl:"🇮🇹"},{c:"es",n:"Espagnol",nn:"Español",fl:"🇪🇸"},
+ {c:"pl",n:"Polonais",nn:"Polski",fl:"🇵🇱"},{c:"cs",n:"Tchèque",nn:"Čeština",fl:"🇨🇿"},
+ {c:"ru",n:"Russe",nn:"Русский",fl:"🇷🇺"},{c:"uk",n:"Ukrainien",nn:"Українська",fl:"🇺🇦"},
+ {c:"nl",n:"Néerlandais",nn:"Nederlands",fl:"🇳🇱"},{c:"pt",n:"Portugais",nn:"Português",fl:"🇵🇹"},
+ {c:"ro",n:"Roumain",nn:"Română",fl:"🇷🇴"},{c:"hu",n:"Hongrois",nn:"Magyar",fl:"🇭🇺"},
+ {c:"sk",n:"Slovaque",nn:"Slovenčina",fl:"🇸🇰"},{c:"sr",n:"Serbe",nn:"Srpski",fl:"🇷🇸"},
+ {c:"sv",n:"Suédois",nn:"Svenska",fl:"🇸🇪"},{c:"da",n:"Danois",nn:"Dansk",fl:"🇩🇰"},
+ {c:"no",n:"Norvégien",nn:"Norsk",fl:"🇳🇴"},{c:"tr",n:"Turc",nn:"Türkçe",fl:"🇹🇷"}
 ];
 const TOP5=["en","de","it","ru","pl"];
 const HAIKU="claude-haiku-4-5-20251001",SONNET="claude-sonnet-4-6";
 const $=s=>document.querySelector(s);
-let pages=[], zonesParPage=null, results={}, currentLang=null, nbZones=0;
+let pages=[], docPlan=null, srcLang=null, traductions={}, menuHTML=null, nbChiffres=0;
 
-/* ===== Langues ===== */
+/* ===== Langues UI ===== */
 const langsEl=$("#langs");
 LANGS.forEach(l=>{const b=document.createElement("button");b.className="lang";b.dataset.c=l.c;
   b.innerHTML='<span class="fl">'+l.fl+'</span>'+l.n;
@@ -203,8 +199,8 @@ fileInput.onchange=async e=>{
   hideErr();
   $("#fileName").textContent=f.name+" (lecture…)";
   try{
-    pages=[];zonesParPage=null;results={};currentLang=null;
-    $("#kDone").textContent="0";$("#kZones").textContent="—";$("#resultCard").classList.add("hidden");
+    pages=[];docPlan=null;traductions={};menuHTML=null;
+    $("#kDone").textContent="0";$("#kPrix").textContent="—";$("#resultCard").classList.add("hidden");
     if(f.type==="application/pdf"||/\.pdf$/i.test(f.name)){
       if(!window.pdfjsLib)throw new Error("Lecture PDF indisponible — utilise des photos des pages.");
       const buf=await f.arrayBuffer();
@@ -214,21 +210,21 @@ fileInput.onchange=async e=>{
         $("#fileName").textContent=f.name+" — page "+i+"/"+n+"…";
         const page=await pdf.getPage(i);
         const vp1=page.getViewport({scale:1});
-        const sc=Math.min(3,2200/Math.max(vp1.width,vp1.height));
+        const sc=Math.min(2.5,1600/Math.max(vp1.width,vp1.height));
         const vp=page.getViewport({scale:sc});
         const c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;
         await page.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
-        const img=await imgFromDataUrl(c.toDataURL("image/jpeg",0.92));
-        pages.push({img:img,b64:miniature(img,1400),W:img.width,H:img.height});
+        const img=await imgFromDataUrl(c.toDataURL("image/jpeg",0.9));
+        pages.push({b64:miniature(img,1400),src:img.src});
       }
       $("#pagesInfo").textContent=(pdf.numPages>8?("⚠️ "+pdf.numPages+" pages — 8 premières traitées."):("✓ "+n+" page(s) lue(s)."));
     } else {
       const dataUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result));r.onerror=rej;r.readAsDataURL(f);});
       const img=await imgFromDataUrl(dataUrl);
-      pages.push({img:img,b64:miniature(img,1400),W:img.width,H:img.height});
+      pages.push({b64:miniature(img,1400),src:dataUrl});
       $("#pagesInfo").textContent="✓ 1 page lue.";
     }
-    $("#previewImg").src=pages[0].img.src;
+    $("#previewImg").src=pages[0].src;
     $("#fileName").textContent=f.name;
     $("#kPages").textContent=pages.length;
     drop.classList.add("hidden");$("#thumb").classList.remove("hidden");
@@ -261,300 +257,224 @@ $("#testBtn").onclick=async()=>{
   finally{$("#testBtn").textContent="Tester la connexion";}
 };
 
-/* ===== AGENT 1 : Arpenteur (OCR pixel) ===== */
-let __worker=null;
-async function getOCR(){
-  if(__worker)return __worker;
-  setStatus("Arpenteur — chargement du moteur (première fois : ~20-40 s)…");
-  __worker=await Tesseract.createWorker(["fra","eng"]);
-  return __worker;
-}
-function lignesDe(data){
-  if(data.lines&&data.lines.length)return data.lines;
-  const ls=[];(data.blocks||[]).forEach(b=>(b.paragraphs||[]).forEach(p=>(p.lines||[]).forEach(l=>ls.push(l))));
-  return ls;
-}
-async function arpenter(page){
-  const w=await getOCR();
-  const res=await w.recognize(page.img,{},{blocks:true,text:true});
-  const brutes=lignesDe(res.data)
-    .filter(l=>l.text&&l.text.trim().length>=2&&(l.confidence==null||l.confidence>=45))
-    .filter(l=>/[A-Za-zÀ-ÿ0-9\u0600-\u06FF]/.test(l.text))
-    .map(l=>({x0:l.bbox.x0,y0:l.bbox.y0,x1:l.bbox.x1,y1:l.bbox.y1,t:l.text.trim()}));
-  return grouper(brutes,page);
-}
-function grouper(lignes,page){
-  lignes.sort((a,b)=>a.y0-b.y0||a.x0-b.x0);
-  const zones=[];
-  lignes.forEach(l=>{
-    const h=l.y1-l.y0;
-    const z=zones.find(z=>{
-      const gap=l.y0-z.y1;
-      const chev=Math.min(z.x1,l.x1)-Math.max(z.x0,l.x0);
-      return gap>-h*0.4&&gap<Math.max(h,z.hMoy)*0.85&&chev>-(z.x1-z.x0)*0.05;
-    });
-    if(z){z.lignes.push(l);z.x0=Math.min(z.x0,l.x0);z.y0=Math.min(z.y0,l.y0);
-      z.x1=Math.max(z.x1,l.x1);z.y1=Math.max(z.y1,l.y1);
-      z.hMoy=z.lignes.reduce((s,q)=>s+(q.y1-q.y0),0)/z.lignes.length;}
-    else zones.push({x0:l.x0,y0:l.y0,x1:l.x1,y1:l.y1,lignes:[l],hMoy:h});
-  });
-  zones.forEach(z=>{
-    z.t=z.lignes.map(l=>l.t).join("\n");
-    /* alignement mesuré */
-    const cs=z.lignes.map(l=>(l.x0+l.x1)/2), gs=z.lignes.map(l=>l.x0);
-    const ec=t=>{const m=t.reduce((s,v)=>s+v,0)/t.length;return Math.sqrt(t.reduce((s,v)=>s+(v-m)*(v-m),0)/t.length);};
-    if(z.lignes.length>1)z.align=ec(cs)<=ec(gs)*0.7?"center":"left";
-    else{const cPage=page.W/2,cZone=(z.x0+z.x1)/2;z.align=Math.abs(cZone-cPage)<page.W*0.06?"center":"left";}
-    /* interligne */
-    z.pitch=z.lignes.length>1?(z.lignes[z.lignes.length-1].y0-z.lignes[0].y0)/(z.lignes.length-1):(z.y1-z.y0)*1.15;
-  });
-  return zones;
-}
-
-/* ===== Couleurs mesurées sur l'original ===== */
-function mesureCouleurs(page,zones){
-  const c=document.createElement("canvas");c.width=page.W;c.height=page.H;
-  const ctx=c.getContext("2d");ctx.drawImage(page.img,0,0);
-  const data=ctx.getImageData(0,0,c.width,c.height);
-  const px=(x,y)=>{x=Math.max(0,Math.min(c.width-1,x|0));y=Math.max(0,Math.min(c.height-1,y|0));
-    const i=(y*c.width+x)*4;return[data.data[i],data.data[i+1],data.data[i+2]];};
-  zones.forEach(z=>{
-    /* fond : médiane du pourtour */
-    const pts=[];const stepX=Math.max(2,((z.x1-z.x0)/40)|0);
-    for(let x=z.x0;x<=z.x1;x+=stepX){pts.push(px(x,z.y0-4));pts.push(px(x,z.y1+4));}
-    const stepY=Math.max(2,((z.y1-z.y0)/24)|0);
-    for(let y=z.y0;y<=z.y1;y+=stepY){pts.push(px(z.x0-4,y));pts.push(px(z.x1+4,y));}
-    const med=(arr,k)=>{const a=arr.map(p=>p[k]).sort((u,v)=>u-v);return a[(a.length/2)|0]||255;};
-    z.fond=[med(pts,0),med(pts,1),med(pts,2)];
-    /* encre : pixels intérieurs les plus éloignés du fond */
-    const encre=[];
-    for(let y=z.y0;y<=z.y1;y+=Math.max(1,stepY/2|0))for(let x=z.x0;x<=z.x1;x+=Math.max(1,stepX/2|0)){
-      const p=px(x,y);
-      const d=Math.abs(p[0]-z.fond[0])+Math.abs(p[1]-z.fond[1])+Math.abs(p[2]-z.fond[2]);
-      if(d>110)encre.push(p);
-    }
-    z.encre=encre.length?[med(encre,0),med(encre,1),med(encre,2)]:[34,34,34];
-    /* graisse estimée : densité d'encre */
-    const surface=((z.x1-z.x0)*(z.y1-z.y0))/(Math.max(1,stepX/2|0)*Math.max(1,stepY/2|0));
-    z.gras=encre.length/Math.max(1,surface)>0.30;
-  });
-}
+/* ===== Schéma des blocs ===== */
+const SPEC='SCHÉMA JSON de page : {"type":"couverture|intercalaire|contenu","blocs":[...]}. BLOCS : {"b":"titre","t":"..."} (grand titre / nom d\'enseigne) · {"b":"chapitre","t":"..."} (mot de chapitre, ex FOOD, DRINKS) · {"b":"soustitre","t":"..."} · {"b":"section","t":"titre de section","cols":["4CL","1/2L"] ou null,"items":[{"n":"nom","d":"description ou null","p":["prix1","prix2"] tel quels, cases vides=""}]} · {"b":"para","t":"..."} · {"b":"bandeau","t":"passage encadré/mis en avant"} · {"b":"pied","t":"..."}. RÈGLES : (1) prix recopiés EXACTEMENT ; (2) ne JAMAIS inventer de titre ni de texte ; (3) ordre du document respecté ; (4) noms propres tels quels ; (5) illisible="[illisible]".';
 
 /* ===== Pipeline ===== */
 $("#runBtn").onclick=run;
 async function run(){
   const langs=selected();if(!pages.length||!langs.length)return;
-  hideErr();results={};$("#kDone").textContent="0";
+  hideErr();traductions={};menuHTML=null;$("#kDone").textContent="0";
   $("#runBtn").disabled=true;$("#runBtn").textContent="Génération…";
   $("#prog").classList.add("show");
-  const total=(zonesParPage?0:pages.length*2)+langs.length*pages.length*0.6+1;let step=0;
+  const total=(docPlan?0:pages.length*1.6)+langs.length*pages.length*0.55+1;let step=0;
   const tick=l=>{step++;$("#progFill").style.width=Math.min(100,Math.round(step/total*100))+"%";$("#progLabel").textContent=l;};
   try{
-    if(!zonesParPage){
-      /* AGENT 1 : Arpenteur */
-      zonesParPage=[];setAg("agA","run");
-      for(let i=0;i<pages.length;i++){
-        setStatus("Arpenteur — page "+(i+1)+"/"+pages.length+" (mesure au pixel)…");
-        const zs=await arpenter(pages[i]);
-        mesureCouleurs(pages[i],zs);
-        zonesParPage.push(zs);
-        tick("Page "+(i+1)+" arpentée ✓");
-      }
-      nbZones=zonesParPage.reduce((s,z)=>s+z.length,0);
-      $("#kZones").textContent=nbZones;
-      setAg("agA","ok");
-      /* AGENT 2 : Lecteur (corrige la lecture OCR d'après l'image) */
+    /* Lecture + style global (une fois) */
+    if(!docPlan){
+      docPlan={style:null,pages:[]};
       setAg("agL","run");
       for(let i=0;i<pages.length;i++){
-        const zs=zonesParPage[i];if(!zs.length){tick("Page "+(i+1)+" — vide");continue;}
-        setStatus("Lecteur — page "+(i+1)+"…");
-        try{
-          const r=parseJSON(await callClaude(HAIKU,[
-            {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pages[i].b64}},
-            {type:"text",text:"Tu es le Lecteur. Voici une image et des textes lus par OCR (avec erreurs possibles : accents, lettres confondues, mots collés). Corrige chaque texte d'après l'image, SANS traduire, SANS rien ajouter ni retirer. Garde les \\n. Indique aussi la famille typographique de chaque zone. TEXTES : "+JSON.stringify(zs.map((z,j)=>({id:j,t:z.t})))+" Réponds UNIQUEMENT en JSON : {\"zones\":[{\"id\":n,\"t\":\"texte corrigé\",\"famille\":\"serif|sans|script\"}]}"}
-          ],2200));
-          (r.zones||[]).forEach(o=>{if(o&&o.id!=null&&zs[o.id]&&o.t){zs[o.id].t=String(o.t);zs[o.id].famille=o.famille||"sans";}});
-        }catch(e){/* on garde l'OCR brut */}
-        tick("Page "+(i+1)+" relue ✓");
+        setStatus("Lecteur — page "+(i+1)+"/"+pages.length+"…");
+        const askStyle=i===0?' Donne aussi "style":{"primaire":"#hex","accent":"#hex","fond":"#hex","fonce":"#hex sombre du document","ambiance":"élégant|chaleureux|moderne|traditionnel"} et "langue_source":"code (fr/en/ar…)" et "enseigne":"nom de l\'établissement si visible".':'';
+        const pg=parseJSON(await callClaude(HAIKU,[
+          {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pages[i].b64}},
+          {type:"text",text:"Tu lis la page "+(i+1)+" d'un document commercial (menu, carte, tarifs, affiche). Extrais TOUT le texte dans le schéma. "+SPEC+askStyle+" Réponds UNIQUEMENT avec le JSON de la page."}
+        ],2800));
+        if(i===0){docPlan.style=pg.style||{};srcLang=(pg.langue_source||"fr").slice(0,2);docPlan.enseigne=pg.enseigne||null;}
+        docPlan.pages.push({type:pg.type||"contenu",blocs:pg.blocs||[]});
+        tick("Page "+(i+1)+" lue ✓");
       }
       setAg("agL","ok");
+      /* Vérificateur sur pages denses */
+      setAg("agV","run");
+      for(let i=0;i<docPlan.pages.length;i++){
+        const pg=docPlan.pages[i];
+        if(!(pg.blocs||[]).some(b=>b.b==="section")){tick("Page "+(i+1)+" — ok");continue;}
+        setStatus("Vérificateur — page "+(i+1)+"…");
+        try{
+          const fix=parseJSON(await callClaude(HAIKU,[
+            {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pages[i].b64}},
+            {type:"text",text:"Tu es le Vérificateur. Compare l'image et l'extraction LIGNE PAR LIGNE : éléments manquants, prix inexacts, fautes. Renvoie le JSON corrigé COMPLET (même schéma), UNIQUEMENT le JSON. "+SPEC+" EXTRACTION : "+JSON.stringify(pg)}
+          ],2800));
+          if(fix&&fix.blocs)docPlan.pages[i]={type:fix.type||pg.type,blocs:fix.blocs};
+        }catch(e){}
+        tick("Page "+(i+1)+" vérifiée ✓");
+      }
+      setAg("agV","ok");
+      nbChiffres=chiffresDoc(docPlan.pages).split("|").filter(Boolean).length;
     }
 
-    montreOnglets(langs);
+    /* Traduction : langue source incluse d'office */
+    const langsFinal=[];
+    const srcInfo=LANGS.find(l=>l.c===srcLang);
+    if(srcInfo&&!langs.some(l=>l.c===srcLang))langsFinal.push(srcInfo);
+    langsFinal.push(...langs);
     setAg("agT","run");
-    for(let k=0;k<langs.length;k++){
-      const L=langs[k];setTab(L.c,"load");
-      try{
-        const trad=await traduireLangue(L,(m)=>setStatus("Traducteur "+L.n+" ("+(k+1)+"/"+langs.length+") — "+m));
-        setAg("agE","run");
-        const canvases=pages.map((p,i)=>ecrire(p,zonesParPage[i],trad[i]||[],!!L.rtl));
-        setAg("agE","ok");
-        const verdict=controler(trad);
-        results[L.c]={canvases:canvases,verdict:verdict};
-        setTab(L.c,"done");
-        $("#kDone").textContent=Object.keys(results).length;
-        if(!currentLang){currentLang=L.c;affiche(L.c);}
-        tick(L.n+" ✓");
-      }catch(e){setTab(L.c,"err");console.error(L.c,e);tick(L.n+" ✗");}
+    traductions={};
+    traductions[srcLang]=docPlan.pages; /* la source est déjà là */
+    let compteur=0;
+    for(const L of langsFinal){
+      if(L.c===srcLang){compteur++;$("#kDone").textContent=compteur;continue;}
+      let pagesTr=[];let echecs=0;
+      for(let i=0;i<docPlan.pages.length;i++){
+        setStatus("Traducteur "+L.n+" — page "+(i+1)+"/"+docPlan.pages.length+"…");
+        const pg=docPlan.pages[i];
+        if(!(pg.blocs||[]).length){pagesTr.push(pg);tick("");continue;}
+        let done=null;
+        for(let e=0;e<2&&!done;e++){
+          try{
+            const r=parseJSON(await callClaude(SONNET,[
+              {type:"text",text:"Traducteur professionnel natif (hôtellerie, restauration, commerce). Traduis en "+L.n+" ("+L.c+") les textes de cette page. RÈGLES ABSOLUES : (1) PRIX, chiffres, téléphones : identiques au caractère près. (2) MARQUES, noms propres, enseignes : jamais traduits ni translittérés. (3) Mots internationaux de cuisine (Pasta, Pizza, Tapas, Couscous, Frutti di Mare…) : tels quels, seules les descriptions se traduisent. (4) Naturel, comme un natif. (5) Même structure JSON, mêmes clés, rien omis. PAGE : "+JSON.stringify(pg)+" Réponds UNIQUEMENT avec le même JSON traduit."}
+            ],2400));
+            if(r&&r.blocs)done={type:pg.type,blocs:r.blocs};
+          }catch(err){}
+        }
+        if(done)pagesTr.push(done);else{pagesTr.push(pg);echecs++;}
+        tick(L.n+" p."+(i+1)+" ✓");
+      }
+      if(echecs<docPlan.pages.length){traductions[L.c]=pagesTr;compteur++;$("#kDone").textContent=compteur;}
     }
-    setAg("agT","ok");setAg("agC","ok");
-    majRapport();
-    const ok=Object.keys(results).length;
-    setStatus(ok===langs.length?("✓ "+ok+" version(s) prête(s)."):("⚠️ "+ok+"/"+langs.length+" réussies — relance pour compléter."));
+    setAg("agT","ok");
+
+    /* Compositeur + Contrôleur */
+    setAg("agW","run");setStatus("Compositeur — fabrication de la page web…");
+    const verdicts=controler();
+    menuHTML=composer(verdicts.langsOk);
+    $("#frame").srcdoc=menuHTML;
+    $("#resultCard").classList.remove("hidden");
+    setAg("agW","ok");setAg("agC","ok");
+    majRapport(verdicts);
+    tick("Menu web prêt ✓");
+    setStatus("✓ Menu multilingue généré ("+verdicts.langsOk.length+" langue(s)).");
   }catch(err){showErr(err.message);setStatus("");}
-  finally{$("#runBtn").disabled=false;$("#runBtn").textContent="Traduire le document";}
+  finally{$("#runBtn").disabled=false;$("#runBtn").textContent="Générer le menu multilingue";}
 }
 
-/* ===== AGENT 3 : Traducteur ===== */
-const REGLES="RÈGLES ABSOLUES : (1) PRIX, chiffres, téléphones, devises : identiques au caractère près. (2) MARQUES et noms propres (enseignes, hôtels, alcools, vins) : jamais traduits ni translittérés. (3) Plats/mots internationaux (Pasta, Pizza, Tapas, Couscous, Frutti di Mare…) : gardés tels quels. (4) Traduction naturelle de métier, comme un natif. (5) Une entrée = une sortie, même id, rien d'omis. (6) Reste concis : une traduction de longueur proche de l'original.";
-async function traduireLangue(L,onMsg){
-  const out=[];
-  for(let i=0;i<pages.length;i++){
-    const zs=zonesParPage[i];
-    if(!zs.length){out.push([]);continue;}
-    onMsg("page "+(i+1)+"…");
-    const paquet=zs.map((z,j)=>({id:j,t:z.t}));
-    let done=null;
-    for(let essai=0;essai<2&&!done;essai++){
-      try{
-        const r=parseJSON(await callClaude(SONNET,[
-          {type:"text",text:"Traducteur professionnel natif (hôtellerie, restauration, commerce). Traduis en "+L.n+" ("+L.c+") chaque texte. "+REGLES+" TEXTES : "+JSON.stringify(paquet)+" Réponds UNIQUEMENT en JSON : {\"zones\":[{\"id\":n,\"t\":\"traduction\"}]}"}
-        ],2400));
-        const arr=r.zones||[];
-        if(arr.length)done=zs.map((z,j)=>{const f=arr.find(a=>a.id===j);return f&&f.t?String(f.t):z.t;});
-      }catch(e){}
-    }
-    const res=done||zs.map(z=>z.t);
-    if(!done)res._echec=true;
-    out.push(res);
-  }
-  return out;
-}
-
-/* ===== AGENT 4 : Écrivain (efface + réécrit au pixel) ===== */
-function ecrire(page,zones,textes,rtl){
-  const c=document.createElement("canvas");c.width=page.W;c.height=page.H;
-  const ctx=c.getContext("2d");
-  ctx.drawImage(page.img,0,0);
-  /* effacement ligne par ligne (précis) */
-  zones.forEach(z=>{
-    z.lignes.forEach(l=>{
-      const pad=Math.max(2,(l.y1-l.y0)*0.14);
-      ctx.fillStyle="rgb("+z.fond[0]+","+z.fond[1]+","+z.fond[2]+")";
-      ctx.fillRect(l.x0-pad,l.y0-pad,(l.x1-l.x0)+pad*2,(l.y1-l.y0)+pad*2);
-    });
+/* ===== Contrôleur ===== */
+function chiffresDoc(pgs){const arr=[];(pgs||[]).forEach(pg=>(pg.blocs||[]).forEach(b=>{
+  if(b.b==="section")(b.items||[]).forEach(it=>(it.p||[]).forEach(p=>{const m=String(p).match(/\d[\d.,]*/g);if(m)arr.push(...m);}));
+}));return arr.sort().join("|");}
+function controler(){
+  const ref=chiffresDoc(docPlan.pages);
+  const langsOk=[],soucis=[];
+  Object.keys(traductions).forEach(c=>{
+    const ok=chiffresDoc(traductions[c])===ref;
+    langsOk.push(c);
+    if(!ok)soucis.push(c);
   });
-  /* réécriture zone par zone */
-  zones.forEach((z,j)=>{
-    const t=String(textes[j]!=null?textes[j]:z.t);
-    dessine(ctx,t,z,rtl);
-  });
-  return c;
+  /* ordre : source d'abord, puis l'ordre des LANGS */
+  langsOk.sort((a,b)=>(a===srcLang?-1:b===srcLang?1:LANGS.findIndex(l=>l.c===a)-LANGS.findIndex(l=>l.c===b)));
+  return{langsOk:langsOk,soucis:soucis};
 }
-function dessine(ctx,texte,z,rtl){
-  const fam=z.famille==="serif"?'Georgia,"Times New Roman",serif':(z.famille==="script"?'"Segoe Script",cursive':'Inter,Arial,sans-serif');
-  const poids=z.gras?"700 ":"400 ";
-  const boxW=z.x1-z.x0, boxH=(z.y1-z.y0)+z.pitch*0.2;
-  let size=z.hMoy*0.92;
-  ctx.textBaseline="alphabetic";
-  ctx.direction=rtl?"rtl":"ltr";
-  const src=texte.split(/\n/).map(s=>s.trim()).filter(Boolean);
-  let lignes=[];
-  for(let e=0;e<22;e++){
-    ctx.font=poids+size+"px "+fam;
-    lignes=[];
-    if(src.length>1){src.forEach(s=>lignes.push(...wrap(ctx,s,boxW*1.02)));}
-    else lignes=wrap(ctx,src[0]||"",boxW*1.02);
-    if(!lignes.length)lignes=[""];
-    const pitch=Math.max(size*1.12,z.pitch*(size/(z.hMoy*0.92)));
-    const wMax=Math.max(...lignes.map(l=>ctx.measureText(l).width));
-    if(lignes.length*pitch<=boxH*1.12&&wMax<=boxW*1.04)break;
-    size*=0.93;
-  }
-  ctx.fillStyle="rgb("+z.encre[0]+","+z.encre[1]+","+z.encre[2]+")";
-  const pitch=Math.max(size*1.12,z.pitch*(size/(z.hMoy*0.92)));
-  const asc=size*0.78;
-  lignes.forEach((l,i)=>{
-    let x;
-    if(z.align==="center"){ctx.textAlign="center";x=(z.x0+z.x1)/2;}
-    else if(rtl){ctx.textAlign="right";x=z.x1;}
-    else{ctx.textAlign="left";x=z.x0;}
-    ctx.fillText(l,x,z.y0+asc+i*pitch);
-  });
-}
-function wrap(ctx,texte,maxW){
-  const mots=texte.split(/\s+/);const out=[];let cur="";
-  mots.forEach(m=>{const test=cur?cur+" "+m:m;
-    if(ctx.measureText(test).width<=maxW||!cur)cur=test;
-    else{out.push(cur);cur=m;}});
-  if(cur)out.push(cur);
-  return out;
-}
-
-/* ===== AGENT 5 : Contrôleur ===== */
-function chiffres(s){return (String(s).match(/\d[\d.,]*/g)||[]).map(x=>x.replace(/[.,]$/,"")).sort().join("|");}
-function controler(trad){
-  let zonesOk=0,zonesTot=0,chiffresKO=0,pagesEchec=[];
-  zonesParPage.forEach((zs,i)=>{
-    if(trad[i]&&trad[i]._echec)pagesEchec.push(i+1);
-    zs.forEach((z,j)=>{zonesTot++;
-      const t=trad[i]&&trad[i][j];
-      if(t&&String(t).trim())zonesOk++;
-      if(chiffres(z.t)!==chiffres(t||""))chiffresKO++;
-    });
-  });
-  return{zonesOk:zonesOk,zonesTot:zonesTot,chiffresKO:chiffresKO,pagesEchec:pagesEchec};
-}
-function majRapport(){
-  const cs=Object.keys(results);if(!cs.length)return;
-  const tousOk=cs.every(c=>{const v=results[c].verdict;return v.zonesOk===v.zonesTot&&v.chiffresKO===0&&!v.pagesEchec.length;});
+function majRapport(v){
   const r=$("#report");
+  const tousOk=!v.soucis.length;
   r.className="report show"+(tousOk?"":" warn");
-  if(tousOk){
-    r.textContent="✓ Contrôle final : "+pages.length+" page(s) · "+cs.length+" langue(s) · "+nbZones+" zones mesurées au pixel · visuel d'origine préservé · aucun chiffre modifié.";
-  }else{
-    const soucis=cs.map(c=>{const v=results[c].verdict;const L=LANGS.find(x=>x.c===c);const p=[];
-      if(v.pagesEchec.length)p.push("page "+v.pagesEchec.join(", ")+" non traduite");
-      if(v.chiffresKO)p.push(v.chiffresKO+" zone(s) à revérifier (chiffres)");
-      return p.length?(L.n+" : "+p.join(" · ")):null;}).filter(Boolean).join(" — ");
-    r.textContent="⚠️ Contrôle : "+(soucis||"vérification partielle")+". Relance « Traduire » pour compléter.";
-  }
+  $("#kPrix").textContent=nbChiffres+(tousOk?" ✓":" ⚠");
+  if(tousOk)r.textContent="✓ Contrôle final : "+pages.length+" page(s) · "+v.langsOk.length+" langue(s) · "+nbChiffres+" chiffres vérifiés identiques dans toutes les langues.";
+  else r.textContent="⚠️ Contrôle : chiffres à revérifier en "+v.soucis.map(c=>(LANGS.find(l=>l.c===c)||{}).n||c).join(", ")+" — relance la génération pour corriger.";
 }
 
-/* ===== Affichage & export ===== */
-function montreOnglets(langs){
-  $("#resultCard").classList.remove("hidden");
-  const tabs=$("#tabs");tabs.innerHTML="";
-  langs.forEach(L=>{const t=document.createElement("button");t.className="tab";t.dataset.c=L.c;
-    t.innerHTML='<span class="st"></span>'+L.fl+" "+L.n;
-    t.onclick=()=>{if(results[L.c]){currentLang=L.c;affiche(L.c);
-      document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.dataset.c===L.c));}};
-    tabs.appendChild(t);});
+/* ===== Compositeur : la page web multilingue ===== */
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function composer(codes){
+  const st=docPlan.style||{};
+  const prim=st.primaire||"#1D3A5F", acc=st.accent||prim, fond=st.fond||"#FBF7F0", fonce=st.fonce||prim;
+  const enseigne=docPlan.enseigne||"";
+  const data={};
+  codes.forEach(c=>{data[c]=traductions[c];});
+  const infos=codes.map(c=>{const L=LANGS.find(l=>l.c===c)||{c:c,nn:c,fl:"🌐"};return{c:L.c,nn:L.nn,fl:L.fl,rtl:!!L.rtl};});
+  const json=JSON.stringify({data:data,langs:infos,src:srcLang}).replace(/<\//g,"<\\/");
+  return '<!DOCTYPE html>\n<html lang="'+srcLang+'">\n<head>\n<meta charset="utf-8"/>\n<meta name="viewport" content="width=device-width, initial-scale=1"/>\n'
+  +'<title>'+esc(enseigne||"Menu")+'</title>\n'
+  +'<style>\n'
+  +'@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");\n'
+  +'*{box-sizing:border-box;margin:0;padding:0}\n'
+  +':root{--prim:'+prim+';--acc:'+acc+';--fond:'+fond+';--fonce:'+fonce+'}\n'
+  +'body{font-family:Inter,system-ui,sans-serif;background:var(--fond);color:#26313B;line-height:1.6;-webkit-font-smoothing:antialiased}\n'
+  +'.rtl{direction:rtl}\n'
+  +'.langbar{position:sticky;top:0;z-index:50;background:var(--fonce);padding:10px 12px;display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch}\n'
+  +'.langbar button{flex:none;font-family:inherit;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.28);background:transparent;color:#fff;cursor:pointer}\n'
+  +'.langbar button.on{background:#fff;color:var(--fonce);border-color:#fff}\n'
+  +'.hero{background:var(--fonce);color:#fff;text-align:center;padding:44px 18px 40px}\n'
+  +'.hero h1{font-family:"Cormorant Garamond",serif;font-size:clamp(30px,7vw,44px);font-weight:600;letter-spacing:.04em}\n'
+  +'.hero .sep{width:54px;height:2px;background:var(--acc);margin:16px auto 0;border-radius:2px}\n'
+  +'main{max-width:680px;margin:0 auto;padding:26px 18px 70px}\n'
+  +'.chap{font-family:"Cormorant Garamond",serif;font-size:clamp(24px,5.5vw,32px);color:var(--prim);text-align:center;letter-spacing:.22em;text-transform:uppercase;margin:38px 0 6px}\n'
+  +'.rtl .chap{letter-spacing:0}\n'
+  +'.chap+.chapline{width:40px;height:2px;background:var(--acc);margin:0 auto 8px;border-radius:2px}\n'
+  +'.sec{margin:26px 0}\n'
+  +'.sec h2{font-family:"Cormorant Garamond",serif;font-size:22px;color:var(--prim);border-bottom:1.5px solid;border-color:color-mix(in srgb,var(--prim) 30%,transparent);padding-bottom:6px;margin-bottom:12px;letter-spacing:.05em}\n'
+  +'.rtl .sec h2{letter-spacing:0}\n'
+  +'.cols{display:flex;justify-content:flex-end;gap:18px;font-size:11px;font-weight:700;color:var(--prim);opacity:.8;margin:-6px 0 8px}\n'
+  +'.rtl .cols{justify-content:flex-start}\n'
+  +'.it{display:flex;align-items:baseline;gap:10px;padding:7px 0}\n'
+  +'.it .nm{font-weight:600;font-size:15px}\n'
+  +'.it .ds{font-size:12.5px;color:#5A6874;margin-top:2px}\n'
+  +'.it .dots{flex:1;border-bottom:1.5px dotted #B9C2CA;transform:translateY(-4px);min-width:16px}\n'
+  +'.it .prs{display:flex;gap:18px;font-weight:700;color:var(--acc);white-space:nowrap;font-size:14.5px}\n'
+  +'.para{font-size:15px;margin:16px 0;text-align:center}\n'
+  +'.band{background:var(--fonce);color:#fff;border-radius:14px;padding:16px 18px;margin:20px 0;font-weight:600;text-align:center;font-size:15px}\n'
+  +'.pied{text-align:center;font-style:italic;color:#5A6874;margin-top:34px;font-size:13.5px}\n'
+  +'.soustitre{text-align:center;color:#5A6874;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-top:-2px}\n'
+  +'.rtl .soustitre{letter-spacing:0}\n'
+  +'footer{text-align:center;font-size:11px;color:#8896A2;padding:18px}\n'
+  +'</style>\n</head>\n<body>\n'
+  +'<nav class="langbar" id="lb"></nav>\n'
+  +'<header class="hero"><h1 id="heroT">'+esc(enseigne)+'</h1><div class="sep"></div></header>\n'
+  +'<main id="m"></main>\n'
+  +'<footer>Menu multilingue · Scandar</footer>\n'
+  +'<script>\n'
+  +'var D='+json+';\n'
+  +'function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}\n'
+  +'function rend(code){\n'
+  +' var L=null;for(var i=0;i<D.langs.length;i++)if(D.langs[i].c===code)L=D.langs[i];\n'
+  +' if(!L)return;\n'
+  +' document.body.classList.toggle("rtl",!!L.rtl);\n'
+  +' document.documentElement.lang=code;document.documentElement.dir=L.rtl?"rtl":"ltr";\n'
+  +' var pgs=D.data[code]||[];var h="";var heroDone=false;\n'
+  +' pgs.forEach(function(pg){(pg.blocs||[]).forEach(function(b){\n'
+  +'  if(b.b==="titre"){if(!heroDone){document.getElementById("heroT").textContent=b.t;heroDone=true;}else h+=\'<div class="chap">\'+esc(b.t)+\'</div><div class="chapline"></div>\';}\n'
+  +'  else if(b.b==="chapitre")h+=\'<div class="chap">\'+esc(b.t)+\'</div><div class="chapline"></div>\';\n'
+  +'  else if(b.b==="soustitre")h+=\'<div class="soustitre">\'+esc(b.t)+\'</div>\';\n'
+  +'  else if(b.b==="section"){h+=\'<div class="sec"><h2>\'+esc(b.t||"")+\'</h2>\';\n'
+  +'   if(b.cols&&b.cols.length)h+=\'<div class="cols">\'+b.cols.map(function(c){return "<span>"+esc(c)+"</span>";}).join("")+\'</div>\';\n'
+  +'   (b.items||[]).forEach(function(it){\n'
+  +'    var prs=(it.p||[]).filter(function(p){return String(p).trim()!=="";});\n'
+  +'    h+=\'<div class="it"><div><div class="nm">\'+esc(it.n||"")+\'</div>\'+(it.d?\'<div class="ds">\'+esc(it.d)+\'</div>\':\'\')+\'</div>\'+(prs.length?\'<div class="dots"></div><div class="prs">\'+(it.p||[]).map(function(p){return String(p).trim()?"<span>"+esc(p)+"</span>":"";}).join("")+\'</div>\':\'\')+\'</div>\';});\n'
+  +'   h+=\'</div>\';}\n'
+  +'  else if(b.b==="bandeau")h+=\'<div class="band">\'+esc(b.t)+\'</div>\';\n'
+  +'  else if(b.b==="para")h+=\'<div class="para">\'+esc(b.t)+\'</div>\';\n'
+  +'  else if(b.b==="pied")h+=\'<div class="pied">\'+esc(b.t)+\'</div>\';\n'
+  +' });});\n'
+  +' document.getElementById("m").innerHTML=h;\n'
+  +' var bs=document.querySelectorAll("#lb button");\n'
+  +' bs.forEach(function(x){x.classList.toggle("on",x.dataset.c===code);});\n'
+  +'}\n'
+  +'var lb=document.getElementById("lb");\n'
+  +'D.langs.forEach(function(L){var b=document.createElement("button");b.dataset.c=L.c;b.textContent=L.fl+" "+L.nn;b.onclick=function(){rend(L.c);};lb.appendChild(b);});\n'
+  +'var nav=(navigator.language||"").slice(0,2).toLowerCase();\n'
+  +'var start=D.langs.some(function(L){return L.c===nav;})?nav:D.src;\n'
+  +'rend(start);\n'
+  +'<\/script>\n</body>\n</html>';
 }
-function setTab(c,s){const t=document.querySelector('.tab[data-c="'+c+'"]');if(!t)return;
-  t.classList.remove("load","done");if(s==="load")t.classList.add("load");
-  if(s==="done")t.classList.add("done");if(s==="err")t.style.opacity=".45";}
+
+/* ===== UI utilitaires ===== */
 function setAg(id,s){$("#"+id).className="ag"+(s?(" "+s):"");}
 function setStatus(t){$("#statusLine").textContent=t;}
 function showErr(m){const e=$("#errBox");e.textContent="⚠️ "+m;e.classList.add("show");}
 function hideErr(){$("#errBox").classList.remove("show");}
-function affiche(c){
-  const R=results[c];if(!R)return;
-  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.dataset.c===c));
-  const v=$("#pagesview");v.innerHTML="";
-  R.canvases.forEach(cv=>v.appendChild(cv));
-}
+
+/* ===== Téléchargement ===== */
 $("#dlBtn").onclick=()=>{
-  if(!currentLang||!results[currentLang])return;
-  const R=results[currentLang];
-  const L=LANGS.find(x=>x.c===currentLang);
-  R.canvases.forEach((cv,i)=>{
-    const url=cv.toDataURL("image/jpeg",0.95);
-    const a=document.createElement("a");
-    a.href=url;
-    a.download="scandar-"+L.c+(R.canvases.length>1?("-page"+(i+1)):"")+".jpg";
-    document.body.appendChild(a);a.click();a.remove();
-  });
+  if(!menuHTML)return;
+  const blob=new Blob([menuHTML],{type:"text/html;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="menu-multilingue.html";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
 };
 </script>
 </body>
