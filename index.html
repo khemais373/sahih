@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Scandar Translate — Menu web multilingue</title>
+<title>Scandar Translate — Une page par langue</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -36,6 +36,10 @@ main{padding:18px 0 70px}
 .fn{font-size:12px;color:var(--soft);word-break:break-all}
 .relink{color:var(--blue);font-weight:600;font-size:12px;cursor:pointer;background:none;border:none;padding:0;margin-top:5px}
 .pagesinfo{font-size:12px;color:var(--green);font-weight:700;margin-top:4px}
+.logozone{display:flex;gap:12px;align-items:center;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.logobtn{font-size:12.5px;font-weight:600;color:var(--blue);background:var(--blue-bg);border:none;border-radius:9px;padding:10px 14px;cursor:pointer}
+.logoprev{width:52px;height:52px;object-fit:contain;border:1px solid var(--line);border-radius:9px;background:#fff;padding:3px;display:none}
+.logoprev.show{display:block}
 .langs{display:flex;flex-wrap:wrap;gap:7px}
 .lang{display:flex;align-items:center;gap:6px;padding:7px 11px;border:1.5px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;font-size:12.5px;font-weight:600;user-select:none}
 .lang.on{border-color:var(--blue);background:var(--blue-bg);color:var(--blue-d)}
@@ -63,6 +67,12 @@ main{padding:18px 0 70px}
 .report{display:none;background:var(--green-bg);border:1px solid #BFE3CD;border-radius:12px;padding:13px 15px;font-size:12.5px;color:#14532D;margin-bottom:12px;font-weight:600}
 .report.warn{background:var(--amber-bg);border-color:#EAD3B3;color:var(--amber)}
 .report.show{display:block}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tab{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tab .st{width:7px;height:7px;border-radius:50%;background:#CBD5E1}
+.tab.done .st{background:var(--green)}.tab.load .st{background:var(--amber);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.3}}
 .preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#EBEFF4}
 .preview iframe{width:100%;height:66vh;border:none;display:block;background:#fff}
 .pv-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
@@ -82,7 +92,7 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
   <div class="kpis">
     <div class="kpi"><div class="l">Pages lues</div><div class="v" id="kPages">0</div></div>
     <div class="kpi"><div class="l">Langues choisies</div><div class="v" id="kSel">0</div></div>
-    <div class="kpi"><div class="l">Langues prêtes</div><div class="v" id="kDone">0</div></div>
+    <div class="kpi"><div class="l">Fichiers prêts</div><div class="v" id="kDone">0</div></div>
     <div class="kpi"><div class="l">Chiffres vérifiés</div><div class="v" id="kPrix">—</div></div>
   </div>
 
@@ -90,7 +100,7 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
 
   <div class="card">
     <h2><span class="n">1</span> Votre document</h2>
-    <p class="sub">Menu, carte, tarifs, affiche… Image ou PDF jusqu'à 8 pages. Le résultat : <b>une page web multilingue élégante</b>, à relier à votre QR code.</p>
+    <p class="sub">Menu, carte, tarifs, affiche… Image ou PDF jusqu'à 8 pages. Chaque langue donnera <b>son propre fichier HTML</b>, fidèle au style d'origine.</p>
     <div id="drop" class="drop" tabindex="0" role="button">
       <div class="ic">📄</div><div class="t">Choisir un fichier</div><div class="h">JPG · PNG · PDF (multi-pages)</div>
     </div>
@@ -100,12 +110,22 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
       <button id="relink" class="relink">Changer de fichier</button></div>
     </div>
     <input id="fileInput" type="file" accept="image/*,application/pdf" class="hidden"/>
+
+    <div class="logozone">
+      <img id="logoPrev" class="logoprev" alt="logo"/>
+      <div>
+        <button class="logobtn" id="logoBtn">🖼️ Ajouter un logo (optionnel)</button>
+        <button class="relink" id="logoDel" style="display:none;margin-left:8px;color:var(--red)">retirer</button>
+        <div class="note" style="margin-top:6px">Le logo apparaîtra en haut de chaque fichier, pour un rendu identique. PNG transparent conseillé.</div>
+      </div>
+      <input id="logoInput" type="file" accept="image/*" class="hidden"/>
+    </div>
     <div class="diag" id="diag"></div>
   </div>
 
   <div class="card">
     <div class="langbar">
-      <h2><span class="n">2</span> Langues du menu web</h2>
+      <h2><span class="n">2</span> Langues (un fichier chacune)</h2>
       <div class="quick">
         <button class="qbtn" data-q="top">Top 5</button>
         <button class="qbtn" data-q="all">Tout</button>
@@ -113,39 +133,41 @@ button:focus-visible,.drop:focus-visible,.lang:focus-visible{outline:2px solid v
       </div>
     </div>
     <div class="langs" id="langs"></div>
-    <p class="note">La langue d'origine du document est toujours incluse. Le téléphone du client affiche automatiquement sa langue. Arabe en écriture droite→gauche. Prix jamais modifiés — contrôlés par code.</p>
+    <p class="note">Prix, chiffres et marques jamais modifiés — contrôlés par code. Arabe en écriture droite→gauche.</p>
   </div>
 
   <div class="card">
-    <h2><span class="n">3</span> Générer le menu web</h2>
-    <p class="sub">Le Lecteur lit chaque page, le Vérificateur relit, le Traducteur traduit, le Compositeur fabrique la page web multilingue, le Contrôleur vérifie les chiffres.</p>
+    <h2><span class="n">3</span> Générer les fichiers</h2>
+    <p class="sub">Le Lecteur lit chaque page, le Vérificateur relit, le Traducteur traduit, le Compositeur fabrique une page fidèle par langue, le Contrôleur vérifie les chiffres.</p>
     <div class="agents">
       <span class="ag" id="agL">📖 Lecteur</span>
       <span class="ag" id="agV">🔍 Vérificateur</span>
       <span class="ag" id="agT">🌍 Traducteur</span>
-      <span class="ag" id="agW">🧩 Compositeur web</span>
+      <span class="ag" id="agW">🧩 Compositeur</span>
       <span class="ag" id="agC">🛡️ Contrôleur</span>
     </div>
     <div style="margin-top:14px">
-      <button id="runBtn" class="btn btn-primary" disabled>Générer le menu multilingue</button>
+      <button id="runBtn" class="btn btn-primary" disabled>Générer les fichiers</button>
     </div>
     <div class="status" id="statusLine"></div>
     <div class="prog" id="prog"><div class="pbar"><div class="f" id="progFill"></div></div><div class="plabel" id="progLabel"></div></div>
   </div>
 
   <div class="card hidden" id="resultCard">
-    <h2><span class="n">✓</span> Votre menu web multilingue</h2>
+    <h2><span class="n">✓</span> Vos fichiers</h2>
     <div class="report" id="report"></div>
-    <div class="preview"><iframe id="frame" title="Aperçu du menu multilingue"></iframe></div>
+    <div class="tabs" id="tabs"></div>
+    <div class="preview"><iframe id="frame" title="Aperçu"></iframe></div>
     <div class="pv-actions">
-      <button class="btn btn-primary" id="dlBtn">📥 Télécharger le fichier (.html)</button>
+      <button class="btn btn-primary" id="dlOne">📥 Télécharger cette langue (.html)</button>
+      <button class="btn btn-ghost" id="dlAll">📦 Télécharger toutes les langues</button>
     </div>
-    <p class="note">Ce fichier unique contient toutes les langues. Mettez-le en ligne (Netlify ou scandar.tn) et reliez votre QR Scandar à son adresse : chaque client verra le menu dans sa langue.</p>
+    <p class="note">Chaque fichier est autonome : mettez-le en ligne et reliez un QR, ou envoyez-le tel quel. Le logo est intégré dans le fichier.</p>
   </div>
 
   <div class="card">
     <h2>Comment ça marche</h2>
-    <p class="empty-help" style="margin-top:8px"><b>1.</b> Chargez votre menu ou vos tarifs (photo, scan ou PDF — toutes les pages sont lues). <b>2.</b> Cochez les langues de vos clients. <b>3.</b> L'intelligence Scandar lit le document, reprend ses couleurs et son ambiance, le traduit avec une qualité de natif (prix et marques intacts, contrôlés par code), et fabrique <b>une page web unique</b> avec un sélecteur de langues : le téléphone du client choisit sa langue automatiquement. <b>4.</b> Téléchargez le fichier, mettez-le en ligne, reliez votre QR — c'est fait.</p>
+    <p class="empty-help" style="margin-top:8px"><b>1.</b> Chargez votre document et, si vous voulez, votre logo. <b>2.</b> Cochez les langues. <b>3.</b> Scandar lit le document, reprend ses couleurs et son ambiance, le traduit (prix et marques intacts, contrôlés par code) et fabrique <b>une page web fidèle et autonome par langue</b>, logo intégré. <b>4.</b> Téléchargez chaque fichier séparément, ou tous d'un coup.</p>
   </div>
 </div></main>
 
@@ -168,7 +190,7 @@ const LANGS=[
 const TOP5=["en","de","it","ru","pl"];
 const HAIKU="claude-haiku-4-5-20251001",SONNET="claude-sonnet-4-6";
 const $=s=>document.querySelector(s);
-let pages=[], docPlan=null, srcLang=null, traductions={}, menuHTML=null, nbChiffres=0;
+let pages=[], docPlan=null, srcLang=null, traductions={}, files={}, currentLang=null, nbChiffres=0, logoDataUrl=null;
 
 /* ===== Langues UI ===== */
 const langsEl=$("#langs");
@@ -184,7 +206,17 @@ function selected(){return [...document.querySelectorAll(".lang.on")].map(b=>LAN
 function syncSel(){$("#kSel").textContent=selected().length;majBtn();}
 function majBtn(){$("#runBtn").disabled=!(pages.length&&selected().length);}
 
-/* ===== Chargement ===== */
+/* ===== Logo ===== */
+$("#logoBtn").onclick=()=>$("#logoInput").click();
+$("#logoInput").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>{logoDataUrl=String(r.result);
+    $("#logoPrev").src=logoDataUrl;$("#logoPrev").classList.add("show");
+    $("#logoBtn").textContent="Logo ajouté ✓";$("#logoDel").style.display="inline";};
+  r.readAsDataURL(f);};
+$("#logoDel").onclick=()=>{logoDataUrl=null;$("#logoPrev").classList.remove("show");
+  $("#logoBtn").textContent="🖼️ Ajouter un logo (optionnel)";$("#logoDel").style.display="none";$("#logoInput").value="";};
+
+/* ===== Chargement document ===== */
 const drop=$("#drop"),fileInput=$("#fileInput");
 drop.onclick=()=>fileInput.click();
 drop.onkeydown=e=>{if(e.key==="Enter"||e.key===" ")fileInput.click();};
@@ -199,7 +231,7 @@ fileInput.onchange=async e=>{
   hideErr();
   $("#fileName").textContent=f.name+" (lecture…)";
   try{
-    pages=[];docPlan=null;traductions={};menuHTML=null;
+    pages=[];docPlan=null;traductions={};files={};currentLang=null;
     $("#kDone").textContent="0";$("#kPrix").textContent="—";$("#resultCard").classList.add("hidden");
     if(f.type==="application/pdf"||/\.pdf$/i.test(f.name)){
       if(!window.pdfjsLib)throw new Error("Lecture PDF indisponible — utilise des photos des pages.");
@@ -257,26 +289,25 @@ $("#testBtn").onclick=async()=>{
   finally{$("#testBtn").textContent="Tester la connexion";}
 };
 
-/* ===== Schéma des blocs ===== */
-const SPEC='SCHÉMA JSON de page : {"type":"couverture|intercalaire|contenu","blocs":[...]}. BLOCS : {"b":"titre","t":"..."} (grand titre / nom d\'enseigne) · {"b":"chapitre","t":"..."} (mot de chapitre, ex FOOD, DRINKS) · {"b":"soustitre","t":"..."} · {"b":"section","t":"titre de section","cols":["4CL","1/2L"] ou null,"items":[{"n":"nom","d":"description ou null","p":["prix1","prix2"] tel quels, cases vides=""}]} · {"b":"para","t":"..."} · {"b":"bandeau","t":"passage encadré/mis en avant"} · {"b":"pied","t":"..."}. RÈGLES : (1) prix recopiés EXACTEMENT ; (2) ne JAMAIS inventer de titre ni de texte ; (3) ordre du document respecté ; (4) noms propres tels quels ; (5) illisible="[illisible]".';
+/* ===== Schéma ===== */
+const SPEC='SCHÉMA JSON : {"type":"couverture|intercalaire|contenu","blocs":[...]}. BLOCS : {"b":"titre","t":"grand titre / nom d\'enseigne"} · {"b":"chapitre","t":"mot de chapitre ex FOOD, DRINKS, CHERS CLIENTS"} · {"b":"soustitre","t":"..."} · {"b":"section","t":"titre de section","cols":["4CL","1/2L"] ou null,"items":[{"n":"nom","d":"description ou null","p":["prix1","prix2"] tels quels, cases vides=""}]} · {"b":"para","t":"paragraphe"} · {"b":"bandeau","t":"passage encadré / mis en avant"} · {"b":"pied","t":"signature / bas de page"}. RÈGLES : (1) prix EXACTS ; (2) ne JAMAIS inventer ; (3) ordre respecté ; (4) noms propres tels quels ; (5) illisible="[illisible]" ; (6) mots mis en évidence entourés de **astérisques**.';
 
 /* ===== Pipeline ===== */
 $("#runBtn").onclick=run;
 async function run(){
   const langs=selected();if(!pages.length||!langs.length)return;
-  hideErr();traductions={};menuHTML=null;$("#kDone").textContent="0";
+  hideErr();traductions={};files={};$("#kDone").textContent="0";
   $("#runBtn").disabled=true;$("#runBtn").textContent="Génération…";
   $("#prog").classList.add("show");
   const total=(docPlan?0:pages.length*1.6)+langs.length*pages.length*0.55+1;let step=0;
   const tick=l=>{step++;$("#progFill").style.width=Math.min(100,Math.round(step/total*100))+"%";$("#progLabel").textContent=l;};
   try{
-    /* Lecture + style global (une fois) */
     if(!docPlan){
       docPlan={style:null,pages:[]};
       setAg("agL","run");
       for(let i=0;i<pages.length;i++){
         setStatus("Lecteur — page "+(i+1)+"/"+pages.length+"…");
-        const askStyle=i===0?' Donne aussi "style":{"primaire":"#hex","accent":"#hex","fond":"#hex","fonce":"#hex sombre du document","ambiance":"élégant|chaleureux|moderne|traditionnel"} et "langue_source":"code (fr/en/ar…)" et "enseigne":"nom de l\'établissement si visible".':'';
+        const askStyle=i===0?' Donne aussi "style":{"primaire":"#hex titres","accent":"#hex 2e couleur forte","fond":"#hex fond clair","fonce":"#hex sombre","ambiance":"élégant|chaleureux|moderne|traditionnel|festif","police":"serif|sans","etoiles":nombre d\'étoiles de classement si visible sinon null}, "langue_source":"code (fr/en/ar…)", "enseigne":"nom de l\'établissement si visible sinon null".':'';
         const pg=parseJSON(await callClaude(HAIKU,[
           {type:"image",source:{type:"base64",media_type:"image/jpeg",data:pages[i].b64}},
           {type:"text",text:"Tu lis la page "+(i+1)+" d'un document commercial (menu, carte, tarifs, affiche). Extrais TOUT le texte dans le schéma. "+SPEC+askStyle+" Réponds UNIQUEMENT avec le JSON de la page."}
@@ -286,7 +317,6 @@ async function run(){
         tick("Page "+(i+1)+" lue ✓");
       }
       setAg("agL","ok");
-      /* Vérificateur sur pages denses */
       setAg("agV","run");
       for(let i=0;i<docPlan.pages.length;i++){
         const pg=docPlan.pages[i];
@@ -305,18 +335,16 @@ async function run(){
       nbChiffres=chiffresDoc(docPlan.pages).split("|").filter(Boolean).length;
     }
 
-    /* Traduction : langue source incluse d'office */
-    const langsFinal=[];
+    /* langue source incluse d'office */
+    const ordre=[];
     const srcInfo=LANGS.find(l=>l.c===srcLang);
-    if(srcInfo&&!langs.some(l=>l.c===srcLang))langsFinal.push(srcInfo);
-    langsFinal.push(...langs);
+    if(srcInfo&&!langs.some(l=>l.c===srcLang))ordre.push(srcInfo);
+    ordre.push(...langs);
+    traductions={};traductions[srcLang]=docPlan.pages;
     setAg("agT","run");
-    traductions={};
-    traductions[srcLang]=docPlan.pages; /* la source est déjà là */
-    let compteur=0;
-    for(const L of langsFinal){
-      if(L.c===srcLang){compteur++;$("#kDone").textContent=compteur;continue;}
-      let pagesTr=[];let echecs=0;
+    for(const L of ordre){
+      if(L.c===srcLang)continue;
+      let pagesTr=[],echecs=0;
       for(let i=0;i<docPlan.pages.length;i++){
         setStatus("Traducteur "+L.n+" — page "+(i+1)+"/"+docPlan.pages.length+"…");
         const pg=docPlan.pages[i];
@@ -325,7 +353,7 @@ async function run(){
         for(let e=0;e<2&&!done;e++){
           try{
             const r=parseJSON(await callClaude(SONNET,[
-              {type:"text",text:"Traducteur professionnel natif (hôtellerie, restauration, commerce). Traduis en "+L.n+" ("+L.c+") les textes de cette page. RÈGLES ABSOLUES : (1) PRIX, chiffres, téléphones : identiques au caractère près. (2) MARQUES, noms propres, enseignes : jamais traduits ni translittérés. (3) Mots internationaux de cuisine (Pasta, Pizza, Tapas, Couscous, Frutti di Mare…) : tels quels, seules les descriptions se traduisent. (4) Naturel, comme un natif. (5) Même structure JSON, mêmes clés, rien omis. PAGE : "+JSON.stringify(pg)+" Réponds UNIQUEMENT avec le même JSON traduit."}
+              {type:"text",text:"Traducteur professionnel natif (hôtellerie, restauration, commerce). Traduis en "+L.n+" ("+L.c+") les textes de cette page. RÈGLES : (1) PRIX/chiffres/téléphones identiques au caractère près. (2) MARQUES, noms propres, enseignes : jamais traduits. (3) Mots internationaux de cuisine (Pasta, Pizza, Tapas, Couscous, Frutti di Mare…) tels quels ; seules les descriptions se traduisent. (4) Naturel, comme un natif. (5) Garde les **astérisques**. (6) Même structure JSON, rien omis. PAGE : "+JSON.stringify(pg)+" Réponds UNIQUEMENT avec le JSON traduit."}
             ],2400));
             if(r&&r.blocs)done={type:pg.type,blocs:r.blocs};
           }catch(err){}
@@ -333,22 +361,26 @@ async function run(){
         if(done)pagesTr.push(done);else{pagesTr.push(pg);echecs++;}
         tick(L.n+" p."+(i+1)+" ✓");
       }
-      if(echecs<docPlan.pages.length){traductions[L.c]=pagesTr;compteur++;$("#kDone").textContent=compteur;}
+      if(echecs<docPlan.pages.length)traductions[L.c]=pagesTr;
     }
     setAg("agT","ok");
 
-    /* Compositeur + Contrôleur */
-    setAg("agW","run");setStatus("Compositeur — fabrication de la page web…");
-    const verdicts=controler();
-    menuHTML=composer(verdicts.langsOk);
-    $("#frame").srcdoc=menuHTML;
-    $("#resultCard").classList.remove("hidden");
+    /* Compositeur : un fichier par langue + Contrôleur */
+    setAg("agW","run");setStatus("Compositeur — fabrication des fichiers…");
+    const v=controler();
+    files={};
+    v.langsOk.forEach(c=>{files[c]=fileFor(c);});
     setAg("agW","ok");setAg("agC","ok");
-    majRapport(verdicts);
-    tick("Menu web prêt ✓");
-    setStatus("✓ Menu multilingue généré ("+verdicts.langsOk.length+" langue(s)).");
+    $("#kDone").textContent=v.langsOk.length;
+    montreOnglets(v.langsOk);
+    currentLang=v.langsOk[0];
+    $("#frame").srcdoc=files[currentLang];
+    $("#resultCard").classList.remove("hidden");
+    majRapport(v);
+    tick("Fichiers prêts ✓");
+    setStatus("✓ "+v.langsOk.length+" fichier(s) généré(s).");
   }catch(err){showErr(err.message);setStatus("");}
-  finally{$("#runBtn").disabled=false;$("#runBtn").textContent="Générer le menu multilingue";}
+  finally{$("#runBtn").disabled=false;$("#runBtn").textContent="Générer les fichiers";}
 }
 
 /* ===== Contrôleur ===== */
@@ -356,126 +388,130 @@ function chiffresDoc(pgs){const arr=[];(pgs||[]).forEach(pg=>(pg.blocs||[]).forE
   if(b.b==="section")(b.items||[]).forEach(it=>(it.p||[]).forEach(p=>{const m=String(p).match(/\d[\d.,]*/g);if(m)arr.push(...m);}));
 }));return arr.sort().join("|");}
 function controler(){
-  const ref=chiffresDoc(docPlan.pages);
-  const langsOk=[],soucis=[];
-  Object.keys(traductions).forEach(c=>{
-    const ok=chiffresDoc(traductions[c])===ref;
-    langsOk.push(c);
-    if(!ok)soucis.push(c);
-  });
-  /* ordre : source d'abord, puis l'ordre des LANGS */
+  const ref=chiffresDoc(docPlan.pages);const langsOk=[],soucis=[];
+  Object.keys(traductions).forEach(c=>{langsOk.push(c);if(chiffresDoc(traductions[c])!==ref)soucis.push(c);});
   langsOk.sort((a,b)=>(a===srcLang?-1:b===srcLang?1:LANGS.findIndex(l=>l.c===a)-LANGS.findIndex(l=>l.c===b)));
   return{langsOk:langsOk,soucis:soucis};
 }
 function majRapport(v){
-  const r=$("#report");
-  const tousOk=!v.soucis.length;
+  const r=$("#report");const tousOk=!v.soucis.length;
   r.className="report show"+(tousOk?"":" warn");
   $("#kPrix").textContent=nbChiffres+(tousOk?" ✓":" ⚠");
-  if(tousOk)r.textContent="✓ Contrôle final : "+pages.length+" page(s) · "+v.langsOk.length+" langue(s) · "+nbChiffres+" chiffres vérifiés identiques dans toutes les langues.";
-  else r.textContent="⚠️ Contrôle : chiffres à revérifier en "+v.soucis.map(c=>(LANGS.find(l=>l.c===c)||{}).n||c).join(", ")+" — relance la génération pour corriger.";
+  if(tousOk)r.textContent="✓ Contrôle final : "+pages.length+" page(s) · "+v.langsOk.length+" fichier(s) · "+nbChiffres+" chiffres vérifiés identiques dans toutes les langues.";
+  else r.textContent="⚠️ Contrôle : chiffres à revérifier en "+v.soucis.map(c=>(LANGS.find(l=>l.c===c)||{}).n||c).join(", ")+" — relance pour corriger.";
 }
 
-/* ===== Compositeur : la page web multilingue ===== */
+/* ===== Compositeur : un fichier autonome et fidèle par langue ===== */
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-function composer(codes){
+function hl(s,acc){return esc(s).replace(/\*\*(.+?)\*\*/g,'<b style="color:'+acc+'">$1</b>');}
+function blocsHTML(pgs,acc,prim,fonce,rtl,enseigne,logo,etoiles){
+  let h="",heroDone=false;
+  /* hero */
+  h+='<header class="hero">';
+  if(logo)h+='<img class="logo" src="'+logo+'" alt="logo"/>';
+  /* trouver le titre principal (enseigne) */
+  let titre=enseigne;
+  if(!titre){outer:for(const pg of pgs)for(const b of (pg.blocs||[]))if(b.b==="titre"){titre=b.t;break outer;}}
+  if(titre)h+='<h1>'+esc(titre)+'</h1>';
+  if(etoiles&&etoiles>0){let s="";for(let i=0;i<etoiles;i++)s+="★";h+='<div class="stars">'+s+'</div>';}
+  h+='<div class="sep"></div></header>';
+  h+='<main>';
+  pgs.forEach(pg=>{(pg.blocs||[]).forEach(b=>{
+    if(b.b==="titre"){if(!heroDone&&(b.t===titre)){heroDone=true;return;}h+='<div class="chap"><span>'+esc(b.t)+'</span></div>';}
+    else if(b.b==="chapitre")h+='<div class="chap"><span>'+esc(b.t)+'</span></div>';
+    else if(b.b==="soustitre")h+='<div class="soustitre">'+esc(b.t)+'</div>';
+    else if(b.b==="section"){
+      h+='<section class="sec"><h2>'+hl(b.t||"",acc)+'</h2>';
+      if(b.cols&&b.cols.length)h+='<div class="cols">'+b.cols.map(c=>"<span>"+esc(c)+"</span>").join("")+'</div>';
+      (b.items||[]).forEach(it=>{
+        const prs=(it.p||[]).filter(p=>String(p).trim()!=="");
+        h+='<div class="it"><div class="l"><div class="nm">'+hl(it.n||"",acc)+'</div>'+(it.d?'<div class="ds">'+hl(it.d,acc)+'</div>':'')+'</div>'
+          +(prs.length?'<span class="dots"></span><div class="prs">'+(it.p||[]).map(p=>String(p).trim()?"<span>"+esc(p)+"</span>":"").join("")+'</div>':'')+'</div>';
+      });
+      h+='</section>';
+    }
+    else if(b.b==="bandeau")h+='<div class="band">'+hl(b.t,"#F5C26B")+'</div>';
+    else if(b.b==="para")h+='<div class="para">'+hl(b.t,acc)+'</div>';
+    else if(b.b==="pied")h+='<div class="pied">'+hl(b.t,acc)+'</div>';
+  });});
+  h+='</main>';
+  return h;
+}
+function fileFor(code){
+  const L=LANGS.find(l=>l.c===code)||{c:code,rtl:false};
   const st=docPlan.style||{};
   const prim=st.primaire||"#1D3A5F", acc=st.accent||prim, fond=st.fond||"#FBF7F0", fonce=st.fonce||prim;
-  const enseigne=docPlan.enseigne||"";
-  const data={};
-  codes.forEach(c=>{data[c]=traductions[c];});
-  const infos=codes.map(c=>{const L=LANGS.find(l=>l.c===c)||{c:c,nn:c,fl:"🌐"};return{c:L.c,nn:L.nn,fl:L.fl,rtl:!!L.rtl};});
-  const json=JSON.stringify({data:data,langs:infos,src:srcLang}).replace(/<\//g,"<\\/");
-  return '<!DOCTYPE html>\n<html lang="'+srcLang+'">\n<head>\n<meta charset="utf-8"/>\n<meta name="viewport" content="width=device-width, initial-scale=1"/>\n'
-  +'<title>'+esc(enseigne||"Menu")+'</title>\n'
-  +'<style>\n'
-  +'@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");\n'
+  const serif=(st.police!=="sans");
+  const titleFont=serif?'"Cormorant Garamond",Georgia,serif':'Inter,sans-serif';
+  const inner=blocsHTML(traductions[code],acc,prim,fonce,!!L.rtl,docPlan.enseigne,logoDataUrl,st.etoiles);
+  const enseigne=docPlan.enseigne||"Menu";
+  return '<!DOCTYPE html>\n<html lang="'+code+'" dir="'+(L.rtl?"rtl":"ltr")+'">\n<head>\n<meta charset="utf-8"/>\n'
+  +'<meta name="viewport" content="width=device-width, initial-scale=1"/>\n<title>'+esc(enseigne)+'</title>\n'
+  +'<style>\n@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");\n'
   +'*{box-sizing:border-box;margin:0;padding:0}\n'
-  +':root{--prim:'+prim+';--acc:'+acc+';--fond:'+fond+';--fonce:'+fonce+'}\n'
-  +'body{font-family:Inter,system-ui,sans-serif;background:var(--fond);color:#26313B;line-height:1.6;-webkit-font-smoothing:antialiased}\n'
-  +'.rtl{direction:rtl}\n'
-  +'.langbar{position:sticky;top:0;z-index:50;background:var(--fonce);padding:10px 12px;display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch}\n'
-  +'.langbar button{flex:none;font-family:inherit;font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.28);background:transparent;color:#fff;cursor:pointer}\n'
-  +'.langbar button.on{background:#fff;color:var(--fonce);border-color:#fff}\n'
-  +'.hero{background:var(--fonce);color:#fff;text-align:center;padding:44px 18px 40px}\n'
-  +'.hero h1{font-family:"Cormorant Garamond",serif;font-size:clamp(30px,7vw,44px);font-weight:600;letter-spacing:.04em}\n'
-  +'.hero .sep{width:54px;height:2px;background:var(--acc);margin:16px auto 0;border-radius:2px}\n'
-  +'main{max-width:680px;margin:0 auto;padding:26px 18px 70px}\n'
-  +'.chap{font-family:"Cormorant Garamond",serif;font-size:clamp(24px,5.5vw,32px);color:var(--prim);text-align:center;letter-spacing:.22em;text-transform:uppercase;margin:38px 0 6px}\n'
-  +'.rtl .chap{letter-spacing:0}\n'
-  +'.chap+.chapline{width:40px;height:2px;background:var(--acc);margin:0 auto 8px;border-radius:2px}\n'
-  +'.sec{margin:26px 0}\n'
-  +'.sec h2{font-family:"Cormorant Garamond",serif;font-size:22px;color:var(--prim);border-bottom:1.5px solid;border-color:color-mix(in srgb,var(--prim) 30%,transparent);padding-bottom:6px;margin-bottom:12px;letter-spacing:.05em}\n'
-  +'.rtl .sec h2{letter-spacing:0}\n'
-  +'.cols{display:flex;justify-content:flex-end;gap:18px;font-size:11px;font-weight:700;color:var(--prim);opacity:.8;margin:-6px 0 8px}\n'
-  +'.rtl .cols{justify-content:flex-start}\n'
+  +'body{font-family:Inter,system-ui,sans-serif;background:'+fond+';color:#26313B;line-height:1.6;-webkit-font-smoothing:antialiased}\n'
+  +'.hero{background:'+fonce+';color:#fff;text-align:center;padding:42px 18px 38px}\n'
+  +'.hero .logo{max-height:96px;max-width:70%;margin:0 auto 16px;display:block;object-fit:contain}\n'
+  +'.hero h1{font-family:'+titleFont+';font-size:clamp(28px,7vw,44px);font-weight:600;letter-spacing:.04em}\n'
+  +(L.rtl?'.hero h1{letter-spacing:0}\n':'')
+  +'.hero .stars{color:'+acc+';letter-spacing:.3em;margin-top:8px;font-size:15px}\n'
+  +'.hero .sep{width:54px;height:2px;background:'+acc+';margin:16px auto 0;border-radius:2px}\n'
+  +'main{max-width:680px;margin:0 auto;padding:26px 20px 70px}\n'
+  +'.chap{text-align:center;margin:36px 0 14px;display:flex;align-items:center;justify-content:center;gap:14px;color:'+prim+'}\n'
+  +'.chap:before,.chap:after{content:"";height:1.5px;width:34px;background:'+acc+'}\n'
+  +'.chap span{font-family:'+titleFont+';font-size:clamp(22px,5vw,30px);font-weight:600;letter-spacing:.16em;text-transform:uppercase}\n'
+  +(L.rtl?'.chap span{letter-spacing:0}\n':'')
+  +'.soustitre{text-align:center;color:#6A7681;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;margin-top:-4px}\n'
+  +(L.rtl?'.soustitre{letter-spacing:0}\n':'')
+  +'.sec{margin:24px 0}\n'
+  +'.sec h2{font-family:'+titleFont+';font-size:22px;color:'+prim+';border-bottom:1.5px solid '+hexA(prim,.28)+';padding-bottom:6px;margin-bottom:12px;letter-spacing:.04em}\n'
+  +(L.rtl?'.sec h2{letter-spacing:0}\n':'')
+  +'.cols{display:flex;justify-content:flex-end;gap:20px;font-size:11px;font-weight:700;color:'+prim+';opacity:.75;margin:-6px 0 8px}\n'
+  +'[dir=rtl] .cols{justify-content:flex-start}\n'
   +'.it{display:flex;align-items:baseline;gap:10px;padding:7px 0}\n'
-  +'.it .nm{font-weight:600;font-size:15px}\n'
-  +'.it .ds{font-size:12.5px;color:#5A6874;margin-top:2px}\n'
-  +'.it .dots{flex:1;border-bottom:1.5px dotted #B9C2CA;transform:translateY(-4px);min-width:16px}\n'
-  +'.it .prs{display:flex;gap:18px;font-weight:700;color:var(--acc);white-space:nowrap;font-size:14.5px}\n'
+  +'.it .l{flex:0 1 auto}.it .nm{font-weight:600;font-size:15px}\n'
+  +'.it .ds{font-size:12.5px;color:#5A6874;margin-top:2px;font-weight:400}\n'
+  +'.it .dots{flex:1;border-bottom:1.5px dotted '+hexA(prim,.35)+';transform:translateY(-4px);min-width:14px}\n'
+  +'.it .prs{display:flex;gap:18px;font-weight:700;color:'+acc+';white-space:nowrap;font-size:14.5px}\n'
+  +'.band{background:'+fonce+';color:#fff;border-radius:14px;padding:16px 18px;margin:22px 0;font-weight:600;text-align:center;font-size:15px}\n'
   +'.para{font-size:15px;margin:16px 0;text-align:center}\n'
-  +'.band{background:var(--fonce);color:#fff;border-radius:14px;padding:16px 18px;margin:20px 0;font-weight:600;text-align:center;font-size:15px}\n'
-  +'.pied{text-align:center;font-style:italic;color:#5A6874;margin-top:34px;font-size:13.5px}\n'
-  +'.soustitre{text-align:center;color:#5A6874;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-top:-2px}\n'
-  +'.rtl .soustitre{letter-spacing:0}\n'
-  +'footer{text-align:center;font-size:11px;color:#8896A2;padding:18px}\n'
-  +'</style>\n</head>\n<body>\n'
-  +'<nav class="langbar" id="lb"></nav>\n'
-  +'<header class="hero"><h1 id="heroT">'+esc(enseigne)+'</h1><div class="sep"></div></header>\n'
-  +'<main id="m"></main>\n'
-  +'<footer>Menu multilingue · Scandar</footer>\n'
-  +'<script>\n'
-  +'var D='+json+';\n'
-  +'function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}\n'
-  +'function rend(code){\n'
-  +' var L=null;for(var i=0;i<D.langs.length;i++)if(D.langs[i].c===code)L=D.langs[i];\n'
-  +' if(!L)return;\n'
-  +' document.body.classList.toggle("rtl",!!L.rtl);\n'
-  +' document.documentElement.lang=code;document.documentElement.dir=L.rtl?"rtl":"ltr";\n'
-  +' var pgs=D.data[code]||[];var h="";var heroDone=false;\n'
-  +' pgs.forEach(function(pg){(pg.blocs||[]).forEach(function(b){\n'
-  +'  if(b.b==="titre"){if(!heroDone){document.getElementById("heroT").textContent=b.t;heroDone=true;}else h+=\'<div class="chap">\'+esc(b.t)+\'</div><div class="chapline"></div>\';}\n'
-  +'  else if(b.b==="chapitre")h+=\'<div class="chap">\'+esc(b.t)+\'</div><div class="chapline"></div>\';\n'
-  +'  else if(b.b==="soustitre")h+=\'<div class="soustitre">\'+esc(b.t)+\'</div>\';\n'
-  +'  else if(b.b==="section"){h+=\'<div class="sec"><h2>\'+esc(b.t||"")+\'</h2>\';\n'
-  +'   if(b.cols&&b.cols.length)h+=\'<div class="cols">\'+b.cols.map(function(c){return "<span>"+esc(c)+"</span>";}).join("")+\'</div>\';\n'
-  +'   (b.items||[]).forEach(function(it){\n'
-  +'    var prs=(it.p||[]).filter(function(p){return String(p).trim()!=="";});\n'
-  +'    h+=\'<div class="it"><div><div class="nm">\'+esc(it.n||"")+\'</div>\'+(it.d?\'<div class="ds">\'+esc(it.d)+\'</div>\':\'\')+\'</div>\'+(prs.length?\'<div class="dots"></div><div class="prs">\'+(it.p||[]).map(function(p){return String(p).trim()?"<span>"+esc(p)+"</span>":"";}).join("")+\'</div>\':\'\')+\'</div>\';});\n'
-  +'   h+=\'</div>\';}\n'
-  +'  else if(b.b==="bandeau")h+=\'<div class="band">\'+esc(b.t)+\'</div>\';\n'
-  +'  else if(b.b==="para")h+=\'<div class="para">\'+esc(b.t)+\'</div>\';\n'
-  +'  else if(b.b==="pied")h+=\'<div class="pied">\'+esc(b.t)+\'</div>\';\n'
-  +' });});\n'
-  +' document.getElementById("m").innerHTML=h;\n'
-  +' var bs=document.querySelectorAll("#lb button");\n'
-  +' bs.forEach(function(x){x.classList.toggle("on",x.dataset.c===code);});\n'
-  +'}\n'
-  +'var lb=document.getElementById("lb");\n'
-  +'D.langs.forEach(function(L){var b=document.createElement("button");b.dataset.c=L.c;b.textContent=L.fl+" "+L.nn;b.onclick=function(){rend(L.c);};lb.appendChild(b);});\n'
-  +'var nav=(navigator.language||"").slice(0,2).toLowerCase();\n'
-  +'var start=D.langs.some(function(L){return L.c===nav;})?nav:D.src;\n'
-  +'rend(start);\n'
-  +'<\/script>\n</body>\n</html>';
+  +'.pied{text-align:center;font-family:'+titleFont+';font-style:italic;color:'+prim+';margin-top:30px;font-size:18px}\n'
+  +'footer{text-align:center;font-size:11px;color:#9AA6B1;padding:16px}\n'
+  +'@media print{body{background:#fff}.hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}}\n'
+  +'</style>\n</head>\n<body>\n'+inner
+  +'<footer>Scandar</footer>\n</body>\n</html>';
 }
+function hexA(hex,a){const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||"");
+  if(!m)return "rgba(60,80,100,"+a+")";
+  return "rgba("+parseInt(m[1],16)+","+parseInt(m[2],16)+","+parseInt(m[3],16)+","+a+")";}
 
-/* ===== UI utilitaires ===== */
+/* ===== Onglets + export ===== */
+function montreOnglets(codes){
+  const tabs=$("#tabs");tabs.innerHTML="";
+  codes.forEach(c=>{const L=LANGS.find(x=>x.c===c)||{c:c,n:c,fl:"🌐"};
+    const t=document.createElement("button");t.className="tab done";t.dataset.c=c;
+    t.innerHTML='<span class="st"></span>'+L.fl+" "+L.n;
+    t.onclick=()=>{currentLang=c;$("#frame").srcdoc=files[c];
+      document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.dataset.c===c));};
+    tabs.appendChild(t);});
+  const first=tabs.querySelector(".tab");if(first)first.classList.add("on");
+}
 function setAg(id,s){$("#"+id).className="ag"+(s?(" "+s):"");}
 function setStatus(t){$("#statusLine").textContent=t;}
 function showErr(m){const e=$("#errBox");e.textContent="⚠️ "+m;e.classList.add("show");}
 function hideErr(){$("#errBox").classList.remove("show");}
-
-/* ===== Téléchargement ===== */
-$("#dlBtn").onclick=()=>{
-  if(!menuHTML)return;
-  const blob=new Blob([menuHTML],{type:"text/html;charset=utf-8"});
+function telecharger(code){
+  const L=LANGS.find(x=>x.c===code)||{c:code};
+  const blob=new Blob([files[code]],{type:"text/html;charset=utf-8"});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;a.download="menu-multilingue.html";
+  const a=document.createElement("a");a.href=url;
+  a.download="menu-"+(docPlan.enseigne?slug(docPlan.enseigne)+"-":"")+code+".html";
   document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),2000);
-};
+  setTimeout(()=>URL.revokeObjectURL(url),2500);
+}
+function slug(s){return String(s).toLowerCase().normalize("NFD").replace(/[^\w]+/g,"-").replace(/^-|-$/g,"").slice(0,24);}
+$("#dlOne").onclick=()=>{if(currentLang&&files[currentLang])telecharger(currentLang);};
+$("#dlAll").onclick=async()=>{const codes=Object.keys(files);for(let i=0;i<codes.length;i++){telecharger(codes[i]);await new Promise(r=>setTimeout(r,600));}};
 </script>
 </body>
 </html>
